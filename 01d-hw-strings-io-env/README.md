@@ -466,14 +466,15 @@ how to compare and copy both strings and arrays of arbitrary values in C.
      to `s3`.  Then call `memprint()` on `s3` to show each byte/character value
      in the array as hexadecimal (i.e., format `"%02x"`).
 
-     *Which bytes/characters were copied over from `s1`?*
+     *Which bytes/characters were copied over from `s1`, including any null
+     characters?*
 
  24. Use the `sprintf()` function to replace the contents of `s4`.  Use the
      format string `"%s %d\n"` and the values of `s1` and `myval`. Then call
      `memprint()` on `s4` to show each byte/character value in the array as
      hexadecimal (i.e., format `"%02x"`).
 
-     *In which places of the array was a null value placed?*
+     *In which place(s) of the array was a null value placed?*
 
  25. *Which variables could be _appropriately_ used in place of `VAR` in the
      following code:*
