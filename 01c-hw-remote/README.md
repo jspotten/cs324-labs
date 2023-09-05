@@ -3,21 +3,21 @@
 The purpose of these exercises is to familiarize you with remote copy,
 compilation, and execution, using `scp`, `ssh`, and `tmux`.
 
- 1. Download [hello.c](hello.c) to your local machine, and then copy it to one
-    of the BYU CS lab machines using `scp`:
+Open a terminal from which you will run the commands specified.
+
+ 1. Copy `hello.c` to one of the BYU CS lab machines using `scp`:
 
     ```bash
     scp hello.c username@schizo.cs.byu.edu:
     ```
 
-    (replace `username` with your BYU CS username)
-
  2. Log in to one of the CS machines using the following command:
+
+    (Again, replace `username` with your BYU CS username)
 
     ```bash
     ssh username@schizo.cs.byu.edu
     ```
-    (again, use your actual username)
 
  3. Run the following command:
 
@@ -93,11 +93,11 @@ compilation, and execution, using `scp`, `ssh`, and `tmux`.
 
  15. Log in to one of the CS machines using the following command:
 
+     (again, use your actual username)
+
      ```bash
      ssh username@schizo.cs.byu.edu
      ```
-     (again, use your actual username)
-
      Because schizo is not actually a lab machine but simply logs you in to
      _some_ lab machine, this is likely not the lab machine you were working on
      previously--i.e., the one where your `tmux` instance is _still_ running.
@@ -105,11 +105,12 @@ compilation, and execution, using `scp`, `ssh`, and `tmux`.
  16. Log in to the CS machine on which you were working previously using the
      following command:
 
+     (again, use your actual username and the hostname of the machine you were
+     working on previously)
+
      ```bash
      ssh username@hostname
      ```
-     (again, use your actual username and the hostname of the machine you were
-     working on previously)
 
  17. Run the following command:
 
