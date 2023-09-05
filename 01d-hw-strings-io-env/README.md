@@ -19,7 +19,6 @@ assignment:
  - `ascii`
  - `printf(3)`
  - `fprintf()`
- - `fputs()`
  - `strcmp()`
  - `memcmp()`
  - `memset()`
@@ -145,7 +144,7 @@ another application that has the proper support to display it.
 For more information, see the man pages for `charsets` and `ascii`.
 
 
-## `printf()` and friends
+## `printf()` and Friends
 
 What do `printf()` and `fprintf()` do?  There are three things different than
 calling `write()`.
@@ -170,6 +169,9 @@ calling `write()`.
    characters `'4'` and `'2'`.  After replacements, the modified set of bytes
    is sent to the terminal or application, so "42" is what is presented.
 
+together represent the ASCII values: `'h'`, `'e'`, `'l'`, `'l'`, `'o'`, `'\n'`
+(newline).
+
 The following snippets all yield equivalent results:
 
 ```c
@@ -181,14 +183,21 @@ fprintf(stdout, "hello %d\n", 42);
 ```
 
 ```c
-fputs("hello 42\n", stdout);
-```
-
-```c
 write(STDOUT_FILENO, "hello 42\n", 8);
 ```
 
-(Note, however, that `write()` does not have buffering.)
+(Note, however, that `write()` does not have buffering.  You will learn more
+about buffering later in the assignment.)
+
+Specifically, what is sent to the console in each case is the following
+sequence of bytes/characters:
+
+| Hexadecimal | 0x68 | 0x65 | 0x6c | 0x6c | 0x6f | 0x20 | 0x34 | 0x32 | 0x0a |
+| Decimal | 104 | 101 | 108 | 108 | 111 | 32 | 52 | 50 | 10 |
+| ASCII | `'h'` | `'e'` | `'l'` | `'l'` | `'o'` | `' '` | `'4'` | `'2'` | `'\n'` |
+
+Again, see the man pages for `charsets` and `ascii`.  And you will see more
+examples of this this later in the assignment.
 
 
 ## Summary and Main Points
