@@ -7,12 +7,14 @@ and operating system features _for your running system_.
 
 ## Setup
 
-Log in to one of the BYU CS machines using `ssh`:
+Open a terminal, and use the `ssh` command to log in to one of the BYU CS
+machines:
+
+(substitute `username` with your actual BYU CS username)
 
 ```bash
 ssh username@schizo.cs.byu.edu
 ```
-(substitute `username` with your actual username)
 
 Run the following:
 
@@ -25,11 +27,11 @@ contents of the manual page for the program `man`.  With the default pager
 (`less`), the following keys are helpful for navigation:
 
  - `h`: launch the built-in help
- - `j` or down arrow: go down one line (mneumonic: the crook of the j points
+ - `j` (or down arrow): go down one line (mneumonic: the crook of the j points
    downward)
- - `k` or up arrow: go up one line
- - `ctrl`+`f` or page down: go down one screen (i.e., page down)
- - `ctrl`+`b` or page up: go up one screen (i.e., page up)
+ - `k` (or up arrow): go up one line
+ - `ctrl`+`f` (or page down): go down one screen (i.e., page down)
+ - `ctrl`+`b` (or page up): go up one screen (i.e., page up)
  - `/`, `<pattern>`, `Enter`: search for `<pattern>`
  - `n`: go to the next instance of the pattern previously searched for
  - `?`: go to the previous instance of the pattern previously searched for
@@ -37,7 +39,11 @@ contents of the manual page for the program `man`.  With the default pager
 
 Now read through the man page for `man`, especially the sections on "SYNOPSIS",
 "DESCRIPTION", "EXAMPLES", "OVERVIEW", and "OPTIONS".  Look closely at the
-`-f` and `-k` options, _which will be useful in the next section_.
+`-f` and `-k` options, _which will be useful to you in the next section_.
+
+Please note that the purpose of this exercise is not to have you learn all the
+concepts referred to by the questions.  Rather, it is to familiarize you with
+the `man` command, man pages, and official system documentation.
 
 
 ## Questions
