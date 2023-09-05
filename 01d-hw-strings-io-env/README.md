@@ -183,7 +183,7 @@ fprintf(stdout, "hello %d\n", 42);
 ```
 
 ```c
-write(STDOUT_FILENO, "hello 42\n", 8);
+write(STDOUT_FILENO, "hello 42\n", 9);
 ```
 
 (Note, however, that `write()` does not have buffering.  You will learn more
@@ -192,6 +192,8 @@ about buffering later in the assignment.)
 Specifically, what is sent to the console in each case is the following
 sequence of bytes/characters:
 
+| Representation | | | | | | | | | |
+| ---------------|-|-|-|-|-|-|-|-|-|
 | Hexadecimal | 0x68 | 0x65 | 0x6c | 0x6c | 0x6f | 0x20 | 0x34 | 0x32 | 0x0a |
 | Decimal | 104 | 101 | 108 | 108 | 111 | 32 | 52 | 50 | 10 |
 | ASCII | `'h'` | `'e'` | `'l'` | `'l'` | `'o'` | `' '` | `'4'` | `'2'` | `'\n'` |
