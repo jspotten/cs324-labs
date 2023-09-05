@@ -23,8 +23,8 @@ assignment before beginning!
  2. Run `make` to build two executables: `fork` and `exec`.  These are programs
     that illustrate the system calls `fork()` and `execve()`.
 
- 3. Start a tmux session.  Create two panes, such that the window looks like
-    this:
+ 3. Start a [tmux session](../01c-hw-remote).  Create two panes, such that the
+    window looks like this:
 
     ```
     ----------------------------
@@ -52,9 +52,13 @@ want to consider these questions as you go through that part.
 
 # Part 2: `fork()` Experimentation
 
-In the next few steps, you will be using the `ps` command to examine how the
-process(es) associated with the `fork` program change over time. Because of
-this, you will want to read all of problems 4 through 11 before you start.
+The `ps` command prints information about processes on the system.  Which
+processes are included and what information is printed about them depends on
+the options you specify on the command line.
+
+In the next steps, you will be using the `ps` command to examine how a process
+associated with the `fork` program changes over time. Because of this, you
+should read all of problems 4 through 11 before you start.
 
  4. In the left pane of your tmux window, run the `fork` program.  In the
     right pane, run the `ps` command _twice_, according to the following
@@ -102,7 +106,7 @@ this, you will want to read all of problems 4 through 11 before you start.
     appropriately go?*
 
  8. Add the line of code referenced in question 6 to the location referenced
-    in question 7.  Then call `make` to re-compiled `fork.c`. (Note that you
+    in question 7.  Then call `make` to re-compile `fork.c`. (Note that you
     may also need to add a few `#include` statements at the top of the file
     for it to compile and run properly.  See the man page for the function to
     learn which to include.)
@@ -184,7 +188,7 @@ the same system-wide file description can write to the same open file.
      Re-`make` and run the newly recompiled `fork`. *Using `cat`, show the
      contents of the `fork-output.txt` file you created.*
 
- 13. *Based on the contents of `fork-output.txt`, Which process(es) wrote to
+ 13. *Based on the contents of `fork-output.txt`, which process(es) wrote to
      the file?*
 
  14. *Based on both the contents of `fork-output.txt` and what was written to
@@ -315,8 +319,8 @@ might want to revisit these questions after you go through that part.
 # Part 6: `execve()` Experimentation
 
 In the next steps, you will be using the `ps` command to examine how a process
-associated with the `exec` program changes over time. Because of this, you will
-want to read all of problems 20 through 23 before you start.
+associated with the `exec` program changes over time. Because of this, you
+should read all of problems 20 through 23 before you start.
 
  28. In the left ("command execution") pane of your tmux window, run the `exec`
      program, passing `/bin/cat` as the first command-line argument. *Show your
