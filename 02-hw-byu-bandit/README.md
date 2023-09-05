@@ -7,15 +7,18 @@ the entire assignment before beginning!
 
 # Preparation
 
-NOTE: Throughout this exercise, you _must_ run the `ssh` command from the BYU
-CS network, or the exercises will not work. To accomplish this, you may either
-log on to a BYU CS lab workstation directly or log on remotely via SSH using
-the following command:
+NOTE: Throughout this exercise, you _must_ run the `ssh` command on a BYU CS
+lab machine, or you will get unexpected results.
+
+Either log on to a BYU CS lab workstation directly or log on remotely using
+SSH.  To log in using `ssh`, open a terminal and use the following `ssh`
+command:
+
+(Replace "username" with your actual CS username)
 
 ```bash
 ssh username@schizo.cs.byu.edu
 ```
-(Replace "username" with your actual CS username)
 
 
 # Instructions
