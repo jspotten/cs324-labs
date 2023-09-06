@@ -81,6 +81,18 @@ still in the man page for `man`:
    ```bash
    man -f printf
    ```
+ - At the command line, enter the following to open the man page in section 1
+   for `printf`.
+   ```bash
+   man 1 printf
+   ```
+   Press "q" to quit.
+ - At the command line, enter the following to open the man page in section 3
+   for `printf`.
+   ```bash
+   man 3 printf
+   ```
+   Press "q" to quit.
 
 Please note that the purpose of this exercise is not to have you learn all the
 concepts referred to by the questions.  Rather, it is to familiarize you with
