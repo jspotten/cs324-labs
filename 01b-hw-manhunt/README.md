@@ -36,14 +36,51 @@ contents of the manual page for the program `man`.  With the default pager
  - `k` (or up arrow): go up one line
  - `ctrl`+`f` (or page down): go down one screen (i.e., page down)
  - `ctrl`+`b` (or page up): go up one screen (i.e., page up)
- - `/`, `<pattern>`, `Enter`: search for `<pattern>`
- - `n`: go to the next instance of the pattern previously searched for
- - `?`: go to the previous instance of the pattern previously searched for
+ - `/`, `pattern`, `Enter`: search for `pattern` "forward" in the document.
+   For example, typing "/foo" then `Enter` would find the next instance of
+   "foo" in the document.
+ - `?`, `pattern`, `Enter`: search for `pattern` "backward" in the document.
+   For example, typing "?foo" then `Enter` would find the previous instance of
+   "foo" in the document.
+ - `n`: go to the next (if `/` was most recently used) or previous (if `?` was
+   most recently used) instance of the pattern previously searched for
  - `q`: quit
 
 Now read through the man page for `man`, especially the sections on "SYNOPSIS",
-"DESCRIPTION", "EXAMPLES", "OVERVIEW", and "OPTIONS".  Look closely at the
-`-f` and `-k` options, _which will be useful to you in the next section_.
+"DESCRIPTION", and "EXAMPLES".  See especially the `-f` and `-k` options.  You
+will use those to answer questions in the next section!
+
+To familiarize yourself the man page, go through the following examples while
+still in the man page for `man`:
+
+ - Find the first instance of "ENVIRONMENT" by typing "/ENVIRONMENT" then
+   `Enter`.
+ - Type "n" to go to the next instance of "ENVIRONMENT".  This one should be on
+   the leftmost side of the screen (i.e., no indentation).  Its placement means
+   that it is the heading for the section called "ENVIRONMENT".
+ - Scroll downwards through the "ENVIRONMENT" section using the `j` key (down).
+ - Find the previous instance of "man -k" by typing "?man -k" then `Enter`.
+   Read the description.
+ - Scroll upwards through the section you are currently in to find the title of
+   the section.  It should be called "EXAMPLES".
+ - Type "q" to exit the pager.
+ - At the command line, enter the following to find all the man pages that
+   include "echo" as a keyword:
+   ```bash
+   man -k echo
+   ```
+   Note that the argument passed to `-k` is a regular expression, so you might
+   find that it returns words that _include_ "echo".  To limit the results to
+   those that have exactly the keyword "echo", use the following:
+   ```bash
+   man -k '^echo$'
+   ```
+   (`^` signifies "start" and `$` signifies "end")
+ - At the command line, enter the following to find all the man page sections
+   for `printf`.
+   ```bash
+   man -f printf
+   ```
 
 Please note that the purpose of this exercise is not to have you learn all the
 concepts referred to by the questions.  Rather, it is to familiarize you with
@@ -55,7 +92,8 @@ the `man` command, man pages, and official system documentation.
 Using only the `man` command, answer the following questions.  To answer each
 question, you will need to call `man` with certain arguments and options and
 either inspect the output or read parts of (or search within) the man page that
-is opened.
+is opened.  If you are confused as to where to start, look at the examples in
+the previous section.
 
  1. What are the numbers associated with the manual sections for executable
     programs, system calls, and library calls, respectively?
