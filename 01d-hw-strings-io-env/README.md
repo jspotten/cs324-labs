@@ -169,9 +169,6 @@ calling `write()`.
    characters `'4'` and `'2'`.  After replacements, the modified set of bytes
    is sent to the terminal or application, so "42" is what is presented.
 
-together represent the ASCII values: `'h'`, `'e'`, `'l'`, `'l'`, `'o'`, `'\n'`
-(newline).
-
 The following snippets all yield equivalent results:
 
 ```c
@@ -199,7 +196,7 @@ sequence of bytes/characters:
 | ASCII | `'h'` | `'e'` | `'l'` | `'l'` | `'o'` | `' '` | `'4'` | `'2'` | `'\n'` |
 
 Again, see the man pages for `charsets` and `ascii`.  And you will see more
-examples of this this later in the assignment.
+examples of this later in the assignment.
 
 
 ## Summary and Main Points
