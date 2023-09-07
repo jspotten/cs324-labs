@@ -22,7 +22,7 @@ assignment:
  - `strcmp()`
  - `memcmp()`
  - `memset()`
- - `strpcy()`
+ - `strcpy()`
  - `sprintf()`
  - `stdin`
  - `stdout`
