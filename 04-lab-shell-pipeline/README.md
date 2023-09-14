@@ -3,8 +3,10 @@
 The purpose of this assignment is to help you become more familiar with the
 concepts of process creation, file descriptor duplication, input/output
 redirection, and inter-process communication (IPC) using pipes.  To do this,
-you will implement a real shell, which reads commands from standard input and
-runs the programs specified in those commands.
+you will implement a shell like `bash` (GNU Bourne-Again SHell), which used in
+operating systems like Linux.  This shell will read commands from standard
+input and run the programs specified in those commands.  It will also redirect
+output to files and to other programs in a pipeline.
 
 # Table of Contents
 - [Getting Started](#getting-started)
@@ -61,11 +63,11 @@ assignment:
 
 ## Resources Provided
 
- - `tsh.c` - contains a functional skeleton of a simple shell (i.e., "tiny
-   shell").  This is where you will do your work!
- - `Makefile` - a file used by the `make` command to building, cleaning, and
+ - `tsh.c` - a file containing a functional skeleton of a simple shell (i.e.,
+   "tiny shell").  This is where you will do your work!
+ - `Makefile` - a file used by the `make` command for building, cleaning, and
    performing automated testing of your code.
- - `tshref` - A binary file containing a reference implementation of tiny
+ - `tshref` - a binary file containing a reference implementation of tiny
    shell to demonstrate correct behavior.
  - `sdriver.pl` - a Perl script that runs a trace file against your shell to
    test its functionality.
@@ -332,23 +334,27 @@ the process is:
      respectively, and duplicating the newly-opened file descriptor onto
      standard input or standard output, respectively.
 
-     Note that for input redirection, you should open the file with mode `"r"`
-     or `O_RDONLY` for `fopen()` or `open()`, respectively, and for output
-     redirection, you should open the file with mode `"w"` or
-     `O_WRONLY | O_CREAT | O_TRUNC` for `fopen()` or `open()`, respectively.
-     For output redirection, this creates a file that does not already exist or
-     truncates a file that does exist.
+     Note that for input redirection, you should open the file with `flags`
+     `O_RDONLY` (read-only) for `open()` and mode `"r"` for `fopen()`. For output
+     redirection, you should open the file with `flags`
+     `O_WRONLY | O_CREAT | O_TRUNC` (write-only, create the file if it doesn't
+     exist, and truncate the file if it does exist) and `mode` `0600`
+     (readable/writable by only your user).  (See the man page for `open(2)`
+     for more.)
    - Close any open file descriptors that will not be used by the child
      process.  Ultimately, only the file descriptors for standard input (0),
      standard output (1), and standard error (2) should remain open at this
-     point.  An illustration of what the final product should look like when a
-     file is opened for output redirection is shown below:
+     point.  For example, an illustration of what the final product should look
+     like when a file is opened for output redirection is shown below:
 
      <img src="redirection.png" width="800">
 
-     Note that even the file descriptors that have been opened as part of
-     input/output redirection should be closed, _after_ they have been
-     duplicated onto standard input or standard output, respectively.
+     In particular, _only_ file descriptors 0, 1, and 2 are left open in the
+     child process.  File descriptor 1 (standard output) references the file
+     description associated with the newly opened file, while file descriptors
+     0 and 2 still reference file descriptions associated with the terminal.
+     All other file descriptors have been closed, but only _after_ they were
+     duplicated onto standard output.
 
      Remember that when multiple file descriptors are referencing the same
      system-wide file description entry (e.g., after a call to `fork()` or
@@ -416,17 +422,23 @@ Thus, the process is:
      process.  Ultimately, only the file descriptors for standard input (0),
      standard output (1), and standard error (2) should remain open at this
      point.  An illustration of what a pipeline with two commands, as well as
-     both input and output redirection is shown below:
+     both input and output redirection, is shown below:
 
      <img src="pipeline-2cmds.png" width="800">
 
-     Note that even the file descriptors that were created as part of
-     input/output redirection or pipes should be closed, _after_ they have been
-     duplicated onto the appropriate descriptors -- whether standard input or
-     standard output.  Additionally, the left-side process (i.e., the one
-     _writing_ to the pipe) should close the _read_ end of the pipe, and the
-     right-side process (i.e., the one _reading_ from the pipe) should close
-     the _write_ end of the pipe.
+     In particular, _only_ file descriptors 0, 1, and 2 are left open in each
+     of the two child processes.  In the first child process, descriptor 0
+     (standard input) references the file description associated with the newly
+     opened file (for reading), file descriptor 1 (standard output) references
+     the file description associated with the write end of the pipe, and file
+     descriptor 2 still references the file description associated with the
+     terminal.  In the second child process, descriptor 0 references the file
+     description associated with the read end of the pipe, descriptor 1
+     references the file description associated with the newly opened file (for
+     writing), and file descriptor 2 still references the file description
+     associated with the terminal.  All other file descriptors have been
+     closed, but only _after_ they were duplicated onto the appropriate
+     descriptors -- whether standard input or standard output.
 
      Remember that when multiple file descriptors are referencing the same
      system-wide file description entry (e.g., after a call to `fork()` or
@@ -506,18 +518,24 @@ For any given pair of consecutive commands, the process is the same as that in
 the previous section.  However, they now should be implemented within a
 carefully-designed `for` loop.  The trick is to do everything in the right
 order.  For example, because the `pipe()` call _must_ happen before both calls
-to `fork()`  (i.e., corresponding to each command in the pair), the `pipe()`
-call for that pair will probably happen in iteration `i`, while the
-corresponding `fork()` calls happen in iteration `i` and `i + 1`.
+to `fork()`  (i.e., corresponding to each command in the pair of piped
+commands), the `pipe()` call for that pair will probably happen in iteration
+`i`, while the corresponding `fork()` calls happen in iteration `i` and
+`i + 1`.  Thus, you'll need to save the value of the file descriptor, such that
+it can be used for iteration `i + 1`.
 
-As you iterate through the loop, remember that each call to `pipe()` yields two
-file descriptors.  Those descriptors are simply integers, but you will want to
-keep track of their values until they have served their purpose (e.g., for
-`dup2()`, `close()`, etc.), which might be in a future iteration.  Note that
-their memory location is not important, only their value.  For example, if `y`
-contains a file descriptor to be saved, the code `x = y;` works just fine,
-after which `x` can be used in place of `y` for "file" operations, and `y` can
-be overwritten.
+Remember that file descriptors are simply integers.  Only their value is
+important, not their memory location.  Thus, if `y` contains a file descriptor
+to be saved, the code `x = y;` works just fine, after which `x` can be used in
+place of `y` for "file" operations, and `y` can be overwritten.
+
+I highly encourage you to create pseudo code and walk through an example of a
+pipeline with `n` commands over `n` iterations -- one for each child
+process.  Start with `n = 2`.  During each iteration `i`, your code should
+consider the following:
+ - Should a new pipe be created during iteration `i`?
+ - Should a file descriptor be duplicated onto standard input for command
+   `i`?  If so, where do you get that value?
 
 An illustration of what a pipeline with three commands as well as both input
 and output redirection is shown below:
@@ -557,7 +575,10 @@ parse the command line.
 
 `parseline()` finds all the words (i.e., non-whitespace characters separated by
 whitespace) on the command line and puts them into an array of strings which
-is passed in as an argument: `char **argv` (i.e., an array of `char *`).
+is passed in as an argument: `char **argv` (i.e., an array of `char *`).  It
+returns true if the last word on the command line is the background operator,
+`&`; false otherwise. (However, for this lab, you will not need to use the
+return value.)
 
 For example, suppose the following command line is provided to your shell:
 
@@ -594,7 +615,7 @@ now passed to `parseargs()`, along with three arrays of `int`: `int *cmd`, `int
 *stdin_redir`, and `int *stdout_redir`).  After `parseargs()` returns, the
 arguments passed have the following values:
 
- - `cmds` has been populated with as many commands have been identified in the
+ - `cmds` should be populated with as many commands have been identified in the
    pipeline (two in this case), such that `cmds[0]` contains the index of the
    first command in args, `cmds[1]` contains the index of the second command in
    `argv`, etc.
@@ -611,7 +632,7 @@ arguments passed have the following values:
 
    ```c
    argv[0] = "/bin/cat";
-   argv[1] = NULL; // <-- this is the end of the argment list for command 0
+   argv[1] = NULL; // <-- this is the end of the argument list for command 0
    argv[2] = "test.txt";
    argv[3] = NULL;
    argv[4] = "/bin/grep";
@@ -637,10 +658,10 @@ arguments passed have the following values:
    than 0 indicates that that command has no input or output redirection.
 
    ```c
-   stdin_redir[0] = 2; // stdin for command 0 ("/bin/cat") has been redirected to argv[2] ("test.txt")
+   stdin_redir[0] = 2; // stdin for command 0 ("/bin/cat") should be redirected to argv[2] ("test.txt")
    stdin_redir[1] = -1; // stdin for command 1 ("/bin/grep") has not been redirected.
    stdout_redir[0] = -1; // stdout for command 0 ("/bin/cat") has not been redirected.
-   stdout_redir[1] = 7; // stdout for command 1 ("/bin/grep") has been redirected to argv[7] ("test2.txt")
+   stdout_redir[1] = 7; // stdout for command 1 ("/bin/grep") should be redirected to argv[7] ("test2.txt")
    ```
 
    Note, however, that only the first command in a pipeline will ever have its
