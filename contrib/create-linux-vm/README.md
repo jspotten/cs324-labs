@@ -12,7 +12,7 @@ Notes:
    be run on the BYU CS lab machines.
 
 
-## VirtualBox (amd64 only)
+# VirtualBox (amd64 only)
 
  1. Download and install
     [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
@@ -39,7 +39,7 @@ Notes:
     to temporarily become `root` (system administrator):
 
     ```
-    $ su -
+    su -
     ```
 
     From the `root` (`#`) prompt, add your user to the `sudo` group:
@@ -60,15 +60,15 @@ Notes:
     line to mount the CD volume:
 
     ```
-    $ mount /media/cdrom
+    mount /media/cdrom
     ```
 
     Then run the following commands to build and install the VirtualBox Guest
     Additions for your VM:
 
     ```
-    $ sudo apt install linux-headers-amd64 build-essential
-    $ sudo sh /media/cdrom/VBoxLinuxAdditions.run
+    sudo apt install linux-headers-amd64 build-essential
+    sudo sh /media/cdrom/VBoxLinuxAdditions.run
     ```
 
     This will allow you to do things like set up a shared drive between host and
@@ -89,7 +89,7 @@ Notes:
      group:
 
      ```
-     $ sudo usermod -a -G vboxsf $USER
+     sudo usermod -a -G vboxsf $USER
      ```
 
      Now log out of LXDE and log back in.  As a member of the `vboxsf` group,
@@ -105,8 +105,8 @@ Notes:
  13. Run the following to remove some unnecessary packages from your VM:
 
      ```
-     $ sudo apt purge libreoffice-{impress,math,writer,draw,base-core,core,help-common,core-nogui} xscreensaver
-     $ sudo apt autoremove
+     sudo apt purge libreoffice-{impress,math,writer,draw,base-core,core,help-common,core-nogui} xscreensaver
+     sudo apt autoremove
      ```
 
  14. Disable the screen locker by doing the following:
@@ -118,7 +118,7 @@ Notes:
      this class:
 
      ```
-     $ sudo apt install git tmux vim
+     sudo apt install git tmux vim
      ```
 
  16. Install whatever other tools and utilities that you think will improve your
@@ -129,13 +129,13 @@ Notes:
      develop within the VM itself if you do not want to.
 
 
-## UTM/Qemu on MacOS (Experimental)
+# UTM/Qemu on MacOS
 
  1. Install [Homebrew](https://brew.sh/).
 
  2. Install qemu and utm:
     ```bash
-    $ brew install utm qemu
+    brew install utm qemu
     ```
 
  3. Download the "netinst" (net install) image from
@@ -179,7 +179,7 @@ Notes:
     to install utilities for allowing the host to interact with the guest:
 
     ```bash
-    $ sudo apt install spice-vdagent
+    sudo apt install spice-vdagent
     ```
 
  7. Reboot your VM to have the changes take effect.
@@ -189,13 +189,13 @@ Notes:
     a. First create a mount point on the VM:
 
        ```bash
-       $ sudo mkdir /media/shared
+       sudo mkdir /media/shared
        ```
 
     b. Mount the shared volume as type `9p`:
 
        ```bash
-       $ sudo mount -t 9p -o trans=virtio,version=9p2000.L share /media/shared/
+       sudo mount -t 9p -o trans=virtio,version=9p2000.L share /media/shared/
        ```
 
     c. Change the permissions (from only the VM perspective) on files and
@@ -223,8 +223,8 @@ Notes:
        directory:
 
        ```bash
-       $ ln -s /media/shared/ ~/shared
-       $ ls -l ~/shared
+       ln -s /media/shared/ ~/shared
+       ls -l ~/shared
        ```
 
 
