@@ -3,8 +3,8 @@
 The purpose of this assignment is to help you become more familiar with the
 concepts of process creation, file descriptor duplication, input/output
 redirection, and inter-process communication (IPC) using pipes.  To do this,
-you will implement a shell like `bash` (GNU Bourne-Again SHell), which used in
-operating systems like Linux.  This shell will read commands from standard
+you will implement a shell like `bash` (GNU Bourne-Again SHell), which is used
+in operating systems like Linux.  This shell will read commands from standard
 input and run the programs specified in those commands.  It will also redirect
 output to files and to other programs in a pipeline.
 
@@ -355,10 +355,10 @@ the process is:
      Note that for input redirection, you should open the file with `flags`
      `O_RDONLY` (read-only) for `open()` and mode `"r"` for `fopen()`. For output
      redirection, you should open the file with `flags`
-     `O_WRONLY | O_CREAT | O_TRUNC` (write-only, create the file if it doesn't
-     exist, and truncate the file if it does exist) and `mode` `0600`
-     (readable/writable by only your user).  (See the man page for `open(2)`
-     for more.)
+     `O_WRONLY | O_CREAT | O_TRUNC` (i.e., write-only, create the file if it
+     doesn't exist, and truncate the file if it does exist) and `mode` `0600`
+     (or, equivalently, `S_IRUSR | S_IWUSR`, i.e., readable/writable by only
+     your user).  (See the man page for `open(2)` for more.)
    - Close any open file descriptors that will not be used by the child
      process.  Ultimately, only the file descriptors for standard input (0),
      standard output (1), and standard error (2) should remain open at this
