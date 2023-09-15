@@ -513,16 +513,22 @@ commands.  It is now time to generalize that code such that a pipe is created
 for every pair of consecutive commands in the pipeline (e.g., command 0 and
 command 1, command 1 and command 2, etc.).  Thus, for a pipeline consisting of
 `n` commands, there should be `n` child processes connected by `n - 1` pipes.
+Note that once you have implemented this generalized code correctly, this _can_
+replace the code you created for handling only two commands. However, this is
+not a requirement. (In any case, you have saved your work at this point,
+right?)
 
-For any given pair of consecutive commands, the process is the same as that in
-the previous section.  However, they now should be implemented within a
-carefully-designed `for` loop.  The trick is to do everything in the right
-order.  For example, because the `pipe()` call _must_ happen before both calls
-to `fork()`  (i.e., corresponding to each command in the pair of piped
-commands), the `pipe()` call for that pair will probably happen in iteration
-`i`, while the corresponding `fork()` calls happen in iteration `i` and
-`i + 1`.  Thus, you'll need to save the value of the file descriptor, such that
-it can be used for iteration `i + 1`.
+For any given pair of consecutive commands, the principles are the same as
+those in the previous section.  However, they now should be implemented within
+a carefully-designed `for` loop.  The trick is to do everything in the right
+order.  For example, for a given pair of piped commands (`i` and `i + 1`), the
+single `pipe()` call _must_ happen before both calls to `fork()`  (i.e.,
+corresponding to each of the two commands).  But if one call to `fork()`
+happens in iteration `i`, and the other call to `fork()` happens in iteration
+`i + 1`, then the write end of the pipe and the read of the pipe will be needed
+in different iterations, `i` and `i + 1`, respectively.  Thus, you will need
+the file descriptor values for _that pipe_ to persist through iteration
+`i + 1`.
 
 Remember that file descriptors are simply integers.  Only their value is
 important, not their memory location.  Thus, if `y` contains a file descriptor
@@ -674,8 +680,7 @@ arguments passed have the following values:
  - Place helpful print statements in your code, for debugging.  Because
    standard output will sometimes be redirected to file or to a pipe, use
    `fprintf(stderr, ...)` to print to standard error, which is not touched in
-   this lab.  Also, remember to flush standard error using `fflush()`, or
-   output might get buffered and not show up when you expected it to.
+   this lab.
  - If you are using VScode,
    [set up the debugger](../contrib/vscode-debugger/README.md), and use it to
    walk through your code.
@@ -704,31 +709,31 @@ following:
 #
 # trace41.txt - Pipeline with stdin/stdout redirection
 #
-/bin/echo -e tsh> ./myppid \0174 /bin/grep [0-9] \0076 TEMPFILE1
-./myppid | /bin/grep [0-9] > TEMPFILE1
+/bin/echo -e tsh> ./myppid \0174 ./mygrep 5 [0-9] \0076 TEMPFILE1
+./myppid | ./mygrep 5 [0-9] > TEMPFILE1
 
-/bin/echo -e tsh> ./myppid \0174 /bin/grep [a-z] \0076 TEMPFILE2
-./myppid | /bin/grep [a-z] > TEMPFILE2
+/bin/echo -e tsh> ./myppid \0174 ./mygrep 5 [a-z] \0076 TEMPFILE2
+./myppid | ./mygrep 5 [a-z] > TEMPFILE2
 
-/bin/echo -e tsh> /bin/cat TEMPFILE1
-/bin/cat TEMPFILE1
+/bin/echo -e tsh> ./mycat 5 TEMPFILE1
+./mycat 5 TEMPFILE1
 
-/bin/echo -e tsh> /bin/cat TEMPFILE2
-/bin/cat TEMPFILE2
+/bin/echo -e tsh> ./mycat 5 TEMPFILE2
+./mycat 5 TEMPFILE2
 
-/bin/echo -e tsh> /bin/cat \0074 TEMPFILE1 \0174 /bin/grep [0-9]
-/bin/cat < TEMPFILE1 | /bin/grep [0-9]
+/bin/echo -e tsh> ./mycat 5 \0074 TEMPFILE1 \0174 ./mygrep 5 [0-9]
+./mycat 5 < TEMPFILE1 | ./mygrep 5 [0-9]
 
-/bin/echo -e tsh> /bin/cat \0074 TEMPFILE1 \0174 /bin/grep [a-z]
-/bin/cat < TEMPFILE1 | /bin/grep [a-z]
+/bin/echo -e tsh> ./mycat 5 \0074 TEMPFILE1 \0174 ./mygrep 5 [a-z]
+./mycat 5 < TEMPFILE1 | ./mygrep 5 [a-z]
 ```
 
 In this case, the shell receives and evaluates the following two lines as
 commands:
 
 ```
-/bin/echo -e tsh> ./myppid \0174 /bin/grep [0-9] \0076 TEMPFILE1
-./myppid | /bin/grep [0-9] > TEMPFILE1
+/bin/echo -e tsh> ./myppid \0174 ./mygrep 5 [0-9] \0076 TEMPFILE1
+./myppid | ./mygrep 5 [0-9] > TEMPFILE1
 ```
 
 (Note that the first of each pair of commands in a trace file typically
@@ -763,18 +768,18 @@ that identifies the trace and its description).  For example:
 
 ```bash
 $ make rtest41
+./sdriver.pl -t trace41.txt -s ./tshref -a "-p"
 #
 # trace41.txt - Pipeline with stdin/stdout redirection
 #
-tsh> ./myppid | /bin/grep [0-9] > tshtmp-1-1KEnkI
-tsh> ./myppid | /bin/grep [a-z] > tshtmp-2-JmhUC4
-tsh> /bin/cat tshtmp-1-1KEnkI
-4
-(2362)
-tsh> /bin/cat tshtmp-2-JmhUC4
-tsh> /bin/cat < tshtmp-1-1KEnkI | /bin/grep [0-9]
-(2362)
-tsh> /bin/cat < tshtmp-1-1KEnkI | /bin/grep [a-z]
+tsh> ./myppid | ./mygrep 5 [0-9] > tshtmp-1-5W0D5n
+tsh> ./myppid | ./mygrep 5 [a-z] > tshtmp-2-3ndiry
+tsh> ./mycat 5 tshtmp-1-5W0D5n
+(3519695)
+tsh> ./mycat 5 tshtmp-2-3ndiry
+tsh> ./mycat 5 < tshtmp-1-5W0D5n | ./mygrep 5 [0-9]
+(3519695)
+tsh> ./mycat 5 < tshtmp-1-5W0D5n | ./mygrep 5 [a-z]
 ```
 
 For comparison, to run _your_ shell against `trace41.txt`, run the following:
@@ -793,6 +798,47 @@ make test41
 
 (etc.)
 
+
+for example:
+
+```
+$ make test41
+./checktsh.pl -v -t trace41.txt
+
+**************************************
+* ./checktsh.pl: Checking trace41.txt...
+**************************************
+
+./checktsh.pl: Running reference shell on trace41.txt...
+#
+# trace41.txt - Pipeline with stdin/stdout redirection
+#
+tsh> ./myppid | ./mygrep 5 [0-9] > tshtmp-1-WkYoWs
+tsh> ./myppid | ./mygrep 5 [a-z] > tshtmp-2-SnErmE
+tsh> ./mycat 5 tshtmp-1-WkYoWs
+(3520255)
+tsh> ./mycat 5 tshtmp-2-SnErmE
+tsh> ./mycat 5 < tshtmp-1-WkYoWs | ./mygrep 5 [0-9]
+(3520255)
+tsh> ./mycat 5 < tshtmp-1-WkYoWs | ./mygrep 5 [a-z]
+
+./checktsh.pl: Running your shell on trace41.txt...
+#
+# trace41.txt - Pipeline with stdin/stdout redirection
+#
+tsh> ./myppid | ./mygrep 5 [0-9] > tshtmp-1-XGZb0U
+tsh> ./myppid | ./mygrep 5 [a-z] > tshtmp-2-DUHDcy
+tsh> ./mycat 5 tshtmp-1-XGZb0U
+(3520274)
+tsh> ./mycat 5 tshtmp-2-DUHDcy
+tsh> ./mycat 5 < tshtmp-1-XGZb0U | ./mygrep 5 [0-9]
+(3520274)
+tsh> ./mycat 5 < tshtmp-1-XGZb0U | ./mygrep 5 [a-z]
+
+./checktsh.pl: Comparing reference outputs to your outputs...
+Passed!
+```
+
 Additonally, to run a comparison against _all_ traces, you can run the
 following:
 
@@ -804,19 +850,31 @@ For example:
 
 ```
 $ make testall
-./checktsh.pl
+./checktsh.pl 1
 Checking trace01.txt...
+Passed!
 Checking trace02.txt...
+Passed!
 Checking trace03.txt...
+Passed!
 Checking trace34.txt...
+Passed!
 Checking trace35.txt...
+Passed!
 Checking trace36.txt...
+Passed!
 Checking trace37.txt...
+Passed!
 Checking trace38.txt...
+Passed!
 Checking trace39.txt...
+Passed!
 Checking trace40.txt...
+Passed!
 Checking trace41.txt...
+Passed!
 Checking trace42.txt...
+Passed!
 ```
 
 Happy testing!
