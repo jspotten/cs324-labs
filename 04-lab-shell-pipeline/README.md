@@ -76,8 +76,26 @@ assignment:
    if their behaviors differ.
  - `trace01.txt` - `trace03.txt` and `trace34.txt` - `trace42.txt` - trace
    files for testing various aspects of your shell.
- - `myintgroup.c` and `myppid.c` - C programs to be run from _within_ your
+ - C programs to be run from _within_ your
    shell for testing its functionality.
+   - `myspin.c` - Runs a `sleep()` loop for as many seconds as are specified on
+     the command line.  Used as a program that simply "runs" for a defined
+     amount of time.
+   - `myintgroup.c` - Runs a `sleep()` loop for as many seconds as are
+     specified on the command line.  After that, causes all processes that are
+     in the group as the current process to terminate.  Used to test group
+     membership.
+   - `myppid.c` - Simply prints the parent process ID (PPID) of the current
+     process to standard output.
+   - `mycat.c` - Behaves _exactly_ like the `/bin/cat` command, except that the
+     first argument is an integer that specifies the number of seconds after
+     which the program will terminate, even if it has not finished the end of
+     its code, which in some cases means having read EOF from standard input.
+   - `mygrep.c` - Behaves _exactly_ like the `/bin/grep` command, except that
+     the first argument is an integer that specifies the number of seconds
+     after which the program will terminate, even if it has not finished the
+     end of its code, which in some cases means having read EOF from standard
+     input.
 
 
 ## Reference Tiny Shell
