@@ -19,9 +19,9 @@ some simple examples of signal usage.  You will begin coding in the
 Read the following in preparation for this assignment:
  - Section 8.5 in the book
  - The man pages for the following system calls:
-   - `signal`
-   - `sigprocmask`
-   - `kill`
+   - `signal(7)`
+   - `sigprocmask(2)`
+   - `kill(2)`
 
 
 ## Resources Provided

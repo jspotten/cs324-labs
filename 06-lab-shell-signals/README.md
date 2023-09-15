@@ -50,15 +50,15 @@ Read the following in preparation for this assignment:
 Additionally, man pages for the following are also referenced throughout the
 assignment:
 
- - `fork()`
- - `signal`
- - `sigaction()`
- - `sigprocmask()`
- - `waitpid()`
- - `exec`
- - `execve()`
- - `setpgid()`
- - `kill()`
+ - `fork(2)`
+ - `signal(7)`, `signal(2)`
+ - `sigaction(2)`
+ - `sigprocmask(2)`
+ - `waitpid(2)`
+ - `exec(3)`
+ - `execve(2)`
+ - `setpgid(2)`
+ - `kill(1)`, `kill(2)`
 
 
 ## Resources Provided
@@ -668,7 +668,7 @@ they did previously, but you should also see output from the print statement
 that you just added when the process finishes.
 
 `waitpid()` is the key function that you will utilize in `sigchld_handler()`.
-Read the man page for `waitpid()` if you haven't already, and pay special
+Read the man page for `waitpid(2)` if you haven't already, and pay special
 attention to the following:
  - the different options for the `pid` parameter;
  - the different options for the `options` parameter (note: multiple options
@@ -926,7 +926,7 @@ structures (`struct job_t`), `jobs`:
    calls `strace` on `./tsh`, showing only calls related to signals. The `-f`
    option indicates that child processes should be traced also, which is
    desirable since an important part of the shell is creating and managing
-   child processes.  See the man page for `strace` for more usage information.
+   child processes.  See the man page for `strace(1)` for more usage information.
 
 
 # Automated Testing

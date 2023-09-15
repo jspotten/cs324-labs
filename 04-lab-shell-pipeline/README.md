@@ -51,14 +51,14 @@ Read the following in preparation for this assignment:
 Additionally, man pages for the following are also referenced throughout the
 assignment:
 
- - `fork()`
- - `pipe()`
- - `dup2()`
- - `close()`
- - `waitpid()`
- - `exec`
- - `execve()`
- - `setpgid()`
+ - `fork(2)`
+ - `pipe(2)`, `pipe(7)`
+ - `dup2(2)`
+ - `close(2)`
+ - `waitpid(2)`
+ - `exec(3)`
+ - `execve(2)`
+ - `setpgid(2)`
 
 
 ## Resources Provided
@@ -716,7 +716,7 @@ arguments passed have the following values:
    `pipe()`, `open()`, and `dup2()`.  The `-f` option indicates that child
    processes should be traced also, which is desirable since an important part
    of the shell is creating and managing child processes.  See the man page for
-   `strace` for more usage information.
+   `strace(1)` for more usage information.
 
 
 # Automated Testing
