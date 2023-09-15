@@ -684,6 +684,10 @@ arguments passed have the following values:
  - If you are using VScode,
    [set up the debugger](../contrib/vscode-debugger/README.md), and use it to
    walk through your code.
+ - Occasionally the helper binaries (e.g., `mycat`, `mygrep`, etc.) have become
+   corrupt through mistaken shell calls (e.g., accidentally redirecting output
+   to `./myppid`).  Try running `make clean` then `make` to remove old
+   (possibly corrupt) binaries and create new, fresh ones.
  - Use the program `strace` to show you which file-related system calls are
    being issued.  `strace` can be used with various command-line options to
    cater it to your needs.  For example, the following command:
