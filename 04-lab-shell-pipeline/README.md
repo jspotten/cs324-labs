@@ -76,8 +76,7 @@ assignment:
    if their behaviors differ.
  - `trace01.txt` - `trace03.txt` and `trace34.txt` - `trace42.txt` - trace
    files for testing various aspects of your shell.
- - C programs to be run from _within_ your
-   shell for testing its functionality.
+ - C programs to be run from _within_ your shell for testing its functionality.
    - `myspin.c` - Runs a `sleep()` loop for as many seconds as are specified on
      the command line.  Used as a program that simply "runs" for a defined
      amount of time.

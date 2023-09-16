@@ -718,7 +718,6 @@ sub check_trace {
             errexit();
         }
     }
-
     
     print "Passed!\n";
     
