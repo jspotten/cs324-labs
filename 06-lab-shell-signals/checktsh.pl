@@ -111,6 +111,23 @@ sub check_trace11 {
 	}
     }
 
+    while (1) {
+        $tshlineold = <TSHFILE>;
+        last if (!defined $tshlineold);
+        $tshlineold =~s/\x0A//g;
+        $tshlineold =~s/\x0D//g;
+        last if ($tshlineold ne "");
+    }
+    if (defined $tshlineold && $tshlineold ne "") {
+        if (!$etrace) {
+            chomp($tshreflineold);
+            print "$0: ERROR: Reference output (ref) differs from yours (tsh):\n";
+            print " ref:[end of file]\n";
+            print " tsh:$tshlineold\n";
+        }
+        errexit();
+    }
+
     $psoutput = "";
     $splitcount = 0;
     while ($tshline = <TSHFILE>) {
@@ -180,6 +197,23 @@ sub check_trace12 {
 	if ($tshlineold =~ /tsh> \/bin\/ps/) {
 	    last;
 	}
+    }
+
+    while (1) {
+        $tshlineold = <TSHFILE>;
+        last if (!defined $tshlineold);
+        $tshlineold =~s/\x0A//g;
+        $tshlineold =~s/\x0D//g;
+        last if ($tshlineold ne "");
+    }
+    if (defined $tshlineold && $tshlineold ne "") {
+        if (!$etrace) {
+            chomp($tshreflineold);
+            print "$0: ERROR: Reference output (ref) differs from yours (tsh):\n";
+            print " ref:[end of file]\n";
+            print " tsh:$tshlineold\n";
+        }
+        errexit();
     }
 
     $psoutput = "";
@@ -259,6 +293,23 @@ sub check_trace13 {
 	if ($tshlineold =~ /bin\/ps/) {
 	    last;
 	}
+    }
+
+    while (1) {
+        $tshlineold = <TSHFILE>;
+        last if (!defined $tshlineold);
+        $tshlineold =~s/\x0A//g;
+        $tshlineold =~s/\x0D//g;
+        last if ($tshlineold ne "");
+    }
+    if (defined $tshlineold && $tshlineold ne "") {
+        if (!$etrace) {
+            chomp($tshreflineold);
+            print "$0: ERROR: Reference output (ref) differs from yours (tsh):\n";
+            print " ref:[end of file]\n";
+            print " tsh:$tshlineold\n";
+        }
+        errexit();
     }
 
     $psoutput = "";
@@ -389,7 +440,7 @@ sub check_trace37_39 {
 	$processcount = 0;
 	$tshline = <TSHFILE>;
 	while (defined($tshline)) {
-	    if ($tshline =~ /(myppid|cat|echo|myintgroup)/) {
+	    if ($tshline =~ /myspin/) {
 	        $processcount++;
 	    }
 	    $tshline = <TSHFILE>;
@@ -405,6 +456,23 @@ sub check_trace37_39 {
 	do {
 	    $tshreflineold = <TSHREFFILE>;
 	} while (defined($tshreflineold) && $tshreflineold !~ /^tsh>/);
+    }
+
+    while (1) {
+        $tshlineold = <TSHFILE>;
+        last if (!defined $tshlineold);
+        $tshlineold =~s/\x0A//g;
+        $tshlineold =~s/\x0D//g;
+        last if ($tshlineold ne "");
+    }
+    if (defined $tshlineold && $tshlineold ne "") {
+        if (!$etrace) {
+            chomp($tshreflineold);
+            print "$0: ERROR: Reference output (ref) differs from yours (tsh):\n";
+            print " ref:[end of file]\n";
+            print " tsh:$tshlineold\n";
+        }
+        errexit();
     }
 }
 
@@ -480,6 +548,23 @@ sub check_trace40 {
 	}
 	$tshrefline_prev = $tshreflineold;
 
+    }
+
+    while (1) {
+        $tshlineold = <TSHFILE>;
+        last if (!defined $tshlineold);
+        $tshlineold =~s/\x0A//g;
+        $tshlineold =~s/\x0D//g;
+        last if ($tshlineold ne "");
+    }
+    if (defined $tshlineold && $tshlineold ne "") {
+        if (!$etrace) {
+            chomp($tshreflineold);
+            print "$0: ERROR: Reference output (ref) differs from yours (tsh):\n";
+            print " ref:[end of file]\n";
+            print " tsh:$tshlineold\n";
+        }
+        errexit();
     }
 }
 
@@ -614,8 +699,24 @@ sub check_trace {
 		}
 		errexit();
 	    }
-	    
-	}
+        }
+
+        while (1) {
+	    $tshlineold = <TSHFILE>;
+            last if (!defined $tshlineold);
+            $tshlineold =~s/\x0A//g;
+            $tshlineold =~s/\x0D//g;
+            last if ($tshlineold ne "");
+        }
+        if (defined $tshlineold && $tshlineold ne "") {
+            if (!$etrace) {
+                chomp($tshreflineold);
+                print "$0: ERROR: Reference output (ref) differs from yours (tsh):\n";
+                print " ref:[end of file]\n";
+                print " tsh:$tshlineold\n";
+            }
+            errexit();
+        }
     }
     
     print "Passed!\n";
