@@ -223,7 +223,7 @@ grep bar somefile.txt | awk '{ print $8 }' | base64 -d
    respectively.  You can try them out with different domain names, types, or
    URLs, to see how they work, but you shouldn't need to do anything fancy with
    them for this assignment.  You will find the `+short` option useful for
-   `dig`.  For example:
+   `dig`.  For example, to query for the `A` record for `example.com` use:
    ```bash
    dig +short example.com A
    ```
