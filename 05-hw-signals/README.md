@@ -280,6 +280,13 @@ Remember the following about signals:
    others, including `SIGTERM` and `SIGINT` is to terminate.  See the man page
    for `signal(7)` for more.
 
+Also note that if a `sleep()` call is interrupted by the receipt of a signal,
+it will not continue sleeping up to the designated time after the interruption.
+Instead, it will return "the number of seconds left to sleep," as per the
+`sleep(3)` man page.  This should not affect the timing of your calls to
+`kill()` and `sleep()`, but you might be surprised about the time taken to
+complete a given scenario without this knowledge.
+
 
 # Automated Testing
 
