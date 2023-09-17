@@ -715,7 +715,8 @@ arguments passed have the following values:
    `pipe()`, `open()`, and `dup2()`.  The `-f` option indicates that child
    processes should be traced also, which is desirable since an important part
    of the shell is creating and managing child processes.  See the man page for
-   `strace(1)` for more usage information.
+   `strace(1)` for more usage information.  Note that any calls to `fork()`
+   will appear as `clone()` in `strace()` output.
 
 
 # Automated Testing
