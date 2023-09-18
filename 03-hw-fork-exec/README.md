@@ -320,15 +320,15 @@ might want to revisit these questions after you go through that part.
 
 In the next steps, you will be using the `ps` command to examine how a process
 associated with the `exec` program changes over time. Because of this, you
-should read all of problems 20 through 23 before you start.
+should read all of problems 28 through 31 before you start.
 
  28. In the left ("command execution") pane of your tmux window, run the `exec`
      program, passing `/bin/cat` as the first command-line argument. *Show your
      terminal commands and the output.*
 
  29. In the right ("system analysis") pane of your tmux window, run the `ps`
-     command, first during the initial 30-second `sleep()` call, then again after
-     the first 30 seconds is over, but before the end of the program.
+     command, first during the initial 30-second `sleep()` call, then again
+     after the first 30 seconds is over, but before the end of the program.
 
      Use the `-p` and `-o` options when you run `ps` so that, respectively:
 
