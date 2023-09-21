@@ -230,6 +230,7 @@ between different processes.
 
  18. Modify `fork.c` according to the following:
 
+     - Comment out _all_ calls to `sleep()`.
      - Prior to the call to `fork()`, open a pipe (see the man page for
        `pipe(2)`).
      - In section B:
@@ -258,7 +259,8 @@ between different processes.
          know where the string ends.  If you have not properly added the null
          character, the command will yield unexpected results.  See an example
          of adding the null byte
-         [here](../01d-hw-strings-io-env#part-5---inputoutput).
+         [here](../01d-hw-strings-io-env#part-5---inputoutput) (i.e., after
+         `read()` was used to read bytes from the file).
 
      Re-`make` and run the newly recompiled `fork`.  *Show the output of your
      program.*
@@ -280,9 +282,10 @@ between different processes.
        - Immediately before calling `close()` on the write end of the pipe,
          sleep for 10 seconds.
      - In section C:
-       - After reading from the pipe and printing the results, perform a second
-         read from the pipe, and again print the number of bytes read from the
-         pipe.
+       - Immediately reading from the pipe and printing the results, perform a
+         second read from the pipe, and again print the number of bytes read
+         from the pipe.  All this should happen before calling `close()` on the
+         read end of the pipe.
 
      Re-`make` and run the newly recompiled `fork`.
 
