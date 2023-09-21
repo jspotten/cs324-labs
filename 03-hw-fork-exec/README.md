@@ -282,10 +282,10 @@ between different processes.
        - Immediately before calling `close()` on the write end of the pipe,
          sleep for 10 seconds.
      - In section C:
-       - Immediately reading from the pipe and printing the results, perform a
-         second read from the pipe, and again print the number of bytes read
-         from the pipe.  All this should happen before calling `close()` on the
-         read end of the pipe.
+       - Immediately after reading from the pipe and printing the results,
+         perform a second read from the pipe, and again print the number of
+         bytes read from the pipe.  All this should happen before calling
+         `close()` on the read end of the pipe.
 
      Re-`make` and run the newly recompiled `fork`.
 
