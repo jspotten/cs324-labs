@@ -243,7 +243,7 @@ tsh> /does/not/exist
 ```
 
 
-### Checkpoint 1
+### Recap 1
 
 By this point, there should be an understanding of the following:
  - a "job" is simply the process(es) associated with a single command line
@@ -356,7 +356,7 @@ result in code from your program being run.  Specifically, the `do_bgfg()` is
 the function that will be called with `bg` or `fg` is entered.
 
 
-### Checkpoint 2
+### Recap 2
 
 At this point, there should be an additional understanding of the following:
  - there may be one or more jobs that have state background or stopped.
@@ -442,7 +442,7 @@ Try either one of these to make the shell exit and to return to the shell from
 which you called `./tshref`.
 
 
-### Checkpoint 3
+### Recap 3
 
 At this point, there should be an additional understanding of the following:
  - Jobs can be interrupted by receiving signals in one of two ways:
@@ -867,7 +867,7 @@ Tests 1 - 16 should work at this point.
 
 # Helper Functions
 
-Several functions have been written to help you parse the command line.
+The following function has been written to help you parse the command line.
 
 
 ## `parseline()`
@@ -948,9 +948,9 @@ structures (`struct job_t`), `jobs`:
    calls `strace` on `./tsh`, showing only calls related to signals. The `-f`
    option indicates that child processes should be traced also, which is
    desirable since an important part of the shell is creating and managing
-   child processes.  See the man page for `strace(1)` for more usage information.
-   Note that any calls to `fork()` will appear as `clone()` in `strace()`
-   output.
+   child processes.  See the man page for `strace(1)` for more usage
+   information.  Note that any calls to `fork()` will appear as `clone()` in
+   `strace()` output.
 
 
 # Automated Testing
