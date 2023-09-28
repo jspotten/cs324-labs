@@ -702,10 +702,14 @@ attention to the following:
 Now do the following:
 
  - Call `waitpid()` such that it returns the process ID of _any_ child process
-   that has _already_ terminated or stopped; that is, it should not actually
-   _wait_ on any child that is still running.
+   that has _already_ terminated or stopped (see the `WUNTRACED` option). That
+   is, it should not actually _wait_ on any child that is still running (see
+   the `WNOHANG` flag), but simply return if there are no children that are
+   ready (return value 0) or no children at all (return value negative).
+   (See the "RETURN VALUE" section in the `waitpid(2)` man page.)
  - Loop until `waitpid()` cannot find any more child processes that are ready
-   to be handled.  For each iteration of the loop:
+   to be handled, i.e., return value is less than or equal to 0.  For each
+   iteration of the loop:
    - If the child process has been stopped, then change the state of the
      corresponding job, and print out a message indicating that the job has
      been stopped.
