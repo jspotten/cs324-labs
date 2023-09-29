@@ -8,7 +8,7 @@ TSHREF = ./tshref
 TSHARGS = "-p"
 CC = gcc
 CFLAGS = -Wall -O2 -g
-FILES = $(TSH) ./myintgroup ./myppid
+FILES = $(TSH) ./myintgroup ./myppid ./myspin ./mygrep ./mycat
 
 all: $(FILES)
 

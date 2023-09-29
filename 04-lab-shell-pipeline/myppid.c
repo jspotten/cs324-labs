@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
     pid = getppid(); 
 
-    if (argc > 1 && strcmp(argv[0], "-e")) {
+    if (argc > 1 && strcmp(argv[1], "-e")) {
         fprintf(stderr, "(%d)\n", pid);
     }
     fprintf(stdout, "(%d)\n", pid);
