@@ -111,32 +111,68 @@ void eval(char *cmdline)
     char *newenviron[] = { NULL };
 
     parseline(cmdline, argv);
-    parseargs(argv, cmds, stdin_redir, stdout_redir);
+    int numCmds = parseargs(argv, cmds, stdin_redir, stdout_redir);
     builtin_cmd(argv);
 
-    int ret = fork();
-    if(ret == 0)
+    
+    for(int i = 0; i < numCmds; i++)
     {
-        if(stdin_redir[0] > -1)
+        int pipefd[2];
+        int result = pipe(pipefd);
+
+        int ret = fork();
+        if(ret == 0)
         {
-            fd = open(argv[stdin_redir[0]], O_RDONLY);
-            dup2(fd, 0);
+            if(stdin_redir[0] > -1)
+            {
+                fd = open(argv[stdin_redir[0]], O_RDONLY);
+                printf("%d\n", fd);
+                dup2(fd, 0);
+                printf("%d\n", fileno(stdin));
+            }
+            //Changes 0 for stdout_len
+            if(stdout_redir[0] > -1)
+            {
+                fd = open(argv[stdout_redir[0]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+                dup2(fd, 1);
+            }
+            if(fd != -1) close(fd);
+            if(numCmds > 1)
+            {
+                dup2(pipefd[1], 1);
+                dup2(pipefd[0], 0);
+                close(pipefd[1]);
+                close(pipefd[0]);
+            }
+
+            execve(argv[cmds[i]], &argv[cmds[i]] , newenviron);
         }
-        if(stdout_redir[0] > -1)
+        else
         {
-            fd = open(argv[stdout_redir[0]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
-            dup2(fd, 1);
+            setpgid(ret, ret);
+            waitpid(ret, NULL, 0);
         }
-        if(fd != -1) close(fd);
-        execve(argv[cmds[0]], &argv[cmds[0]] , newenviron);
-    }
-    else
-    {
-        setpgid(ret, ret);
-        waitpid(ret, NULL, 0);
+        fflush(stdin);
     }
     return;
 }
+
+// void handleReirection(int fd, char **argv, int *cmds, int *stdin_redir, int *stdout_redir)
+// {
+//     char *newenviron[] = { NULL };
+//     if(stdin_redir[0] > -1)
+//     {
+//         fd = open(argv[stdin_redir[0]], O_RDONLY);
+//         dup2(fd, 0);
+//     }
+//     if(stdout_redir[0] > -1)
+//     {
+//         fd = open(argv[stdout_redir[0]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+//         dup2(fd, 1);
+//     }
+//     if(fd != -1) close(fd);
+//     execve(argv[cmds[0]], &argv[cmds[0]] , newenviron);
+// }
 
 /* 
  * parseargs - Parse the arguments to identify pipelined commands
