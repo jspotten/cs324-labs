@@ -4,6 +4,7 @@
  * <Put your name and login ID here>
  */
 #include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -95,17 +96,45 @@ int main(int argc, char **argv)
 /* 
  * eval - Evaluate the command line that the user has just typed in
  * 
- * If the user has requested a built-in command (e.g., "quit")
- * then execute it immediately.
- *
- * Otherwise, build a pipeline of commands
- * run the job in the context of the child.  Have the parent wait for child process to complete and then return.  Note:
- * each child process must have a unique process group ID so that our
- * background children don't receive SIGINT (SIGTSTP) from the kernel
- * when we type ctrl-c (ctrl-z) at the keyboard.  
+ * If the user has requested a built-in command (quit) then execute it
+ * immediately. Otherwise, build a pipeline of commands and wait for all of
+ * them to complete before returning.
 */
 void eval(char *cmdline) 
 {
+    char* argv[MAXARGS];
+    int cmds[MAXARGS];
+    int stdin_redir[MAXLINE];
+    int stdout_redir[MAXLINE];
+    int stdout_len = sizeof(stdin_redir) / sizeof(stdin_redir[0]);
+    int fd = -1;
+    char *newenviron[] = { NULL };
+
+    parseline(cmdline, argv);
+    parseargs(argv, cmds, stdin_redir, stdout_redir);
+    builtin_cmd(argv);
+
+    int ret = fork();
+    if(ret == 0)
+    {
+        if(stdin_redir[0] > -1)
+        {
+            fd = open(argv[stdin_redir[0]], O_RDONLY);
+            dup2(fd, 0);
+        }
+        if(stdout_redir[0] > -1)
+        {
+            fd = open(argv[stdout_redir[0]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+            dup2(fd, 1);
+        }
+        if(fd != -1) close(fd);
+        execve(argv[cmds[0]], &argv[cmds[0]] , newenviron);
+    }
+    else
+    {
+        setpgid(ret, ret);
+        waitpid(ret, NULL, 0);
+    }
     return;
 }
 
@@ -233,6 +262,10 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
+    if(strcmp(argv[0], "quit") == 0)
+    {
+        exit(0);
+    }
     return 0;     /* not a builtin command */
 }
 
