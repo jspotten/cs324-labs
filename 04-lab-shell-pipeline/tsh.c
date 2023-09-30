@@ -108,93 +108,83 @@ void eval(char *cmdline)
     int stdout_redir[MAXLINE];
     int stdout_len = sizeof(stdin_redir) / sizeof(stdin_redir[0]);
     int fd = -1;
-    char *newenviron[] = { NULL };
+    int pgid = 0;
     int rdPipeFD = -1;
+    char *newenviron[] = { NULL };
 
     parseline(cmdline, argv);
     int numCmds = parseargs(argv, cmds, stdin_redir, stdout_redir);
     builtin_cmd(argv);
+    int pids[numCmds];
 
-    //fprintf(stderr, "%d\n", stdin_redir[0]);
     for(int i = 0; i < numCmds; i++)
-    {
+    {       
+        int pipefd[2];
+        int res = pipe(pipefd);
         int ret = fork();
         if(ret == 0)
         {
-            //fprintf(stderr, "HELLO\n");
-            if(i == 0)
+            if(stdin_redir[0] > -1)
             {
-                if(stdin_redir[0] > -1)
-                {
-                    fd = open(argv[stdin_redir[0]], O_RDONLY);
-                    dup2(fd, 0);
-                }
-                if(numCmds > 1)
-                {
-                    int pipefd[2];
-                    int res = pipe(pipefd);
-                    dup2(pipefd[1], 1);
-                    close(pipefd[1]);  
-                    rdPipeFD = pipefd[0];
-                }
+                fd = open(argv[stdin_redir[0]], O_RDONLY);
+                dup2(fd, 0);
+            }
+            if(stdout_redir[0] > -1)
+            {
+                fd = open(argv[stdout_redir[0]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+                dup2(fd, 1);
+            }
+
+            if(i == 0 && (numCmds > 1))
+            {
+                close(pipefd[0]);
+                dup2(pipefd[1], 1);
+                close(pipefd[1]);  
             } 
             else if(i == numCmds - 1)
             {
-                fprintf(stderr, "HELLO\n");
                 if(numCmds > 1)
                 {
+                    close(pipefd[1]);
                     dup2(rdPipeFD, 0);
-                    close(rdPipeFD);
-                }
-                if(stdout_redir[stdout_len - 1] > -1)
-                {
-                    //fprintf(stderr, "%d\n", stdout_redir[stdout_len - 1]);
-                    fd = open(argv[stdout_redir[stdout_len - 1]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
-                    dup2(fd, 1);
+                    close(pipefd[0]);
                 }
             } 
             else
             {
-                int pipefd[2];
-                int res = pipe(pipefd);
                 dup2(pipefd[1], 1);
                 close(pipefd[1]);
                 dup2(rdPipeFD, 0);
                 close(rdPipeFD);
-                rdPipeFD = pipefd[0];
             } 
             if(fd != -1) close(fd);
+            pids[i] = getpid();
+            // fprintf(stderr, "CHILD PGID: %d\n", getpgid(getpid()));
             execve(argv[cmds[i]], &argv[cmds[i]] , newenviron);
         }
         else
         {
-            setpgid(ret, ret);
+            close(pipefd[1]);
+            rdPipeFD = pipefd[0];
+            if(i == 0)
+            {
+                pgid = getppid();
+            }
+            // fprintf(stderr, "PGID %d\n", pgid);
+            setpgid(ret, pgid);
+            // if(i == numCmds - 1)
+            // {
+            //     for(int j = 0; j < numCmds; j++)
+            //     {
+            //         waitpid(pids[j], NULL, 0);
+            //     }
+            // }
             waitpid(ret, NULL, 0);
-            if(rdPipeFD != -1) close(rdPipeFD);
         }
-        //fflush(stdin);
     }
-    return;
+    return;    
 }
 
-
-
-// void handleReirection(int fd, char **argv, int *cmds, int *stdin_redir, int *stdout_redir)
-// {
-//     char *newenviron[] = { NULL };
-//     if(stdin_redir[0] > -1)
-//     {
-//         fd = open(argv[stdin_redir[0]], O_RDONLY);
-//         dup2(fd, 0);
-//     }
-//     if(stdout_redir[0] > -1)
-//     {
-//         fd = open(argv[stdout_redir[0]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
-//         dup2(fd, 1);
-//     }
-//     if(fd != -1) close(fd);
-//     execve(argv[cmds[0]], &argv[cmds[0]] , newenviron);
-// }
 
 /* 
  * parseargs - Parse the arguments to identify pipelined commands
