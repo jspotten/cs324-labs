@@ -1,0 +1,1 @@
+tsh> ./myppid | ./mygrep 5 [a-z] > tshtmp-2-Z3OCE8

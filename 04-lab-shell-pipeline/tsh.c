@@ -124,14 +124,14 @@ void eval(char *cmdline)
         int ret = fork();
         if(ret == 0)
         {
-            if(stdin_redir[0] > -1)
+            if((i == 0) && (stdin_redir[0] > -1))
             {
                 fd = open(argv[stdin_redir[0]], O_RDONLY);
                 dup2(fd, 0);
             }
-            if(stdout_redir[0] > -1)
+            if((i == numCmds - 1) && (stdout_redir[i] > -1))
             {
-                fd = open(argv[stdout_redir[0]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+                fd = open(argv[stdout_redir[i]], O_WRONLY | O_CREAT | O_TRUNC, 0600);
                 dup2(fd, 1);
             }
 
@@ -158,30 +158,27 @@ void eval(char *cmdline)
                 close(rdPipeFD);
             } 
             if(fd != -1) close(fd);
-            pids[i] = getpid();
-            // fprintf(stderr, "CHILD PGID: %d\n", getpgid(getpid()));
             execve(argv[cmds[i]], &argv[cmds[i]] , newenviron);
         }
         else
         {
+            pids[i] = ret;
             close(pipefd[1]);
             rdPipeFD = pipefd[0];
             if(i == 0)
             {
-                pgid = getppid();
+                pgid = ret;
             }
-            // fprintf(stderr, "PGID %d\n", pgid);
             setpgid(ret, pgid);
-            // if(i == numCmds - 1)
-            // {
-            //     for(int j = 0; j < numCmds; j++)
-            //     {
-            //         waitpid(pids[j], NULL, 0);
-            //     }
-            // }
-            waitpid(ret, NULL, 0);
         }
+
     }
+
+    for(int j = 0; j < numCmds; j++)
+    {
+        waitpid(pids[j], NULL, 0);
+    }
+
     return;    
 }
 
