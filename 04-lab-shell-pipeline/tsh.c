@@ -18,6 +18,8 @@
 #define MAXLINE    1024   /* max line size */
 #define MAXARGS     128   /* max args on a command line */
 
+#define UNUSED(res) (void)(res)
+
 /* Global variables */
 extern char **environ;      /* defined in libc */
 char prompt[] = "tsh> ";    /* command line prompt (DO NOT CHANGE) */
@@ -106,7 +108,6 @@ void eval(char *cmdline)
     int cmds[MAXARGS];
     int stdin_redir[MAXLINE];
     int stdout_redir[MAXLINE];
-    int stdout_len = sizeof(stdin_redir) / sizeof(stdin_redir[0]);
     int fd = -1;
     int pgid = 0;
     int rdPipeFD = -1;
@@ -121,7 +122,9 @@ void eval(char *cmdline)
     {       
         int pipefd[2];
         int res = pipe(pipefd);
+        UNUSED(res);
         int ret = fork();
+
         if(ret == 0)
         {
             if((i == 0) && (stdin_redir[0] > -1))
