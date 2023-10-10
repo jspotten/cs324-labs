@@ -23,13 +23,15 @@ def check_server(server):
     try:
         s.recv(1)
         stat = True
-    except socket.timeout:
+    except (socket.timeout, ConnectionRefusedError):
         stat = False
 
     with lock:
         status[server] = stat
 
 def user_specific_index(total):
+    if total < 1:
+        return None
     uid = os.geteuid()
     digest = hashlib.sha1(uid.to_bytes(4, byteorder='big')).hexdigest()
     hashed_int = int(digest[-8:], 16)
@@ -60,8 +62,11 @@ def show_full_status():
 def show_preferred_server():
     up_servers = [s for s in SERVERS if status[s]]
     index = user_specific_index(len(up_servers))
-    sys.stdout.write('Preferred server (for your user): %s\n' % \
-            up_servers[index])
+    if index is None:
+        sys.stdout.write('All servers are down!\n')
+    else:
+        sys.stdout.write('Preferred server (for your user): %s\n' % \
+                up_servers[index])
 
 def main():
     get_status()
