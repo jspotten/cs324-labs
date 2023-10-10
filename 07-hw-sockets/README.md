@@ -445,9 +445,10 @@ cp client.c client-tcp.c
 ```
 
 Remove the code in `client.c` that loops through command-line arguments and
-writes each to the socket.  Replace it using the following instructions, which
-should take place immediately after the socket connection is established (i.e.,
-after `connect()`):
+writes each to the socket.  Replace it using the following instructions. These
+should take place should take place immediately after the socket connection is
+established--that is, after breaking out of the loop that uses `connect()` to
+establish a connection with the remote side.
 
  - Write a loop to read (using `read()`) input from standard input
    (`STDIN_FILENO` or 0) into an array of type `unsigned char` until EOF is
