@@ -7,6 +7,19 @@ operating systems like Linux.  This shell will read commands from standard
 input and run the programs specified in those commands.  It will also support
 multiple jobs.
 
+
+# Maintain Your Repository
+
+ Before beginning:
+ - [../01a-hw-private-repo-mirror](Mirror the class repository), if you haven't
+   already.
+ - [../01a-hw-private-repo-mirror#update-your-mirrored-repository-from-the-upstream](Merge upstream changes)
+   into your private repository.
+
+ As you complete the assignment:
+ - [../01a-hw-private-repo-mirror#commit-and-push-local-changes-to-your-private-repo](Commit changes to your private repository).
+
+
 # Table of Contents
 
 - [Getting Started](#getting-started)

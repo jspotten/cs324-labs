@@ -5,6 +5,17 @@ concepts associated with client and server sockets that are non-blocking, as
 part of the I/O multiplexing concurrency paradigm.  You will learn these
 concepts by building a working HTTP proxy server that uses epoll.
 
+# Maintain Your Repository
+
+ Before beginning:
+ - [../01a-hw-private-repo-mirror](Mirror the class repository), if you haven't
+   already.
+ - [../01a-hw-private-repo-mirror#update-your-mirrored-repository-from-the-upstream](Merge upstream changes)
+   into your private repository.
+
+ As you complete the assignment:
+ - [../01a-hw-private-repo-mirror#commit-and-push-local-changes-to-your-private-repo](Commit changes to your private repository).
+
 
 # Table of Contents
 

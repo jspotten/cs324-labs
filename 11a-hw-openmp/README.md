@@ -5,6 +5,17 @@ computation using threads and the OpenMP library.  Code is provided for
 computing the Mandelbrot set.  You will parallelize this code using OpenMP and
 demonstrate the efficiency by measuring the computation.
 
+# Maintain Your Repository
+
+ Before beginning:
+ - [../01a-hw-private-repo-mirror](Mirror the class repository), if you haven't
+   already.
+ - [../01a-hw-private-repo-mirror#update-your-mirrored-repository-from-the-upstream](Merge upstream changes)
+   into your private repository.
+
+ As you complete the assignment:
+ - [../01a-hw-private-repo-mirror#commit-and-push-local-changes-to-your-private-repo](Commit changes to your private repository).
+
 
 # Preparation
 

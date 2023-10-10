@@ -4,6 +4,18 @@ The purpose of this assignment is to help you become more familiar with the
 concepts associated with sockets, including UDP communications, local and
 remote port assignment, IPv4 and IPv6, message parsing, and more.
 
+# Maintain Your Repository
+
+ Before beginning:
+ - [../01a-hw-private-repo-mirror](Mirror the class repository), if you haven't
+   already.
+ - [../01a-hw-private-repo-mirror#update-your-mirrored-repository-from-the-upstream](Merge upstream changes)
+   into your private repository.
+
+ As you complete the assignment:
+ - [../01a-hw-private-repo-mirror#commit-and-push-local-changes-to-your-private-repo](Commit changes to your private repository).
+
+
 # Table of Contents
 
  - [Overview](#overview)

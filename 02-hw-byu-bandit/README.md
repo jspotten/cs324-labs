@@ -5,6 +5,18 @@ environment, including redirection, pipelining, backgrounding, and more.  Read
 the entire assignment before beginning!
 
 
+# Maintain Your Repository
+
+ Before beginning:
+ - [../01a-hw-private-repo-mirror](Mirror the class repository), if you haven't
+   already.
+ - [../01a-hw-private-repo-mirror#update-your-mirrored-repository-from-the-upstream](Merge upstream changes)
+   into your private repository.
+
+ As you complete the assignment:
+ - [../01a-hw-private-repo-mirror#commit-and-push-local-changes-to-your-private-repo](Commit changes to your private repository).
+
+
 # Preparation
 
 NOTE: Throughout this exercise, you _must_ run the `ssh` command on a BYU CS

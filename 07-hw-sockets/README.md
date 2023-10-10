@@ -6,6 +6,17 @@ sockets of type `SOCK_DGRAM` (UDP).  You will experiment with that code and
 then modify it to work for `SOCK_STREAM` (TCP), so you become familiar with
 both communication types.
 
+# Maintain Your Repository
+
+ Before beginning:
+ - [../01a-hw-private-repo-mirror](Mirror the class repository), if you haven't
+   already.
+ - [../01a-hw-private-repo-mirror#update-your-mirrored-repository-from-the-upstream](Merge upstream changes)
+   into your private repository.
+
+ As you complete the assignment:
+ - [../01a-hw-private-repo-mirror#commit-and-push-local-changes-to-your-private-repo](Commit changes to your private repository).
+
 
 # Preparation
 
