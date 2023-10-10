@@ -9,13 +9,13 @@ assignment before beginning!
 # Maintain Your Repository
 
  Before beginning:
- - [../01a-hw-private-repo-mirror](Mirror the class repository), if you haven't
+ - [Mirror the class repository](../01a-hw-private-repo-mirror), if you haven't
    already.
- - [../01a-hw-private-repo-mirror#update-your-mirrored-repository-from-the-upstream](Merge upstream changes)
+ - [Merge upstream changes](../01a-hw-private-repo-mirror#update-your-mirrored-repository-from-the-upstream)
    into your private repository.
 
  As you complete the assignment:
- - [../01a-hw-private-repo-mirror#commit-and-push-local-changes-to-your-private-repo](Commit changes to your private repository).
+ - [Commit changes to your private repository](../01a-hw-private-repo-mirror#commit-and-push-local-changes-to-your-private-repo).
 
 
 # Preparation

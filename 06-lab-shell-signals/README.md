@@ -11,7 +11,7 @@ multiple jobs.
 # Maintain Your Repository
 
  Before beginning:
- - [Mirror the class repository](../01a-hw-private-repo-mirror), if you haven't 
+ - [Mirror the class repository](../01a-hw-private-repo-mirror), if you haven't
    already.
  - [Merge upstream changes](../01a-hw-private-repo-mirror#update-your-mirrored-repository-from-the-upstream)
    into your private repository.
