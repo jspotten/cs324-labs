@@ -823,18 +823,18 @@ manipulation:
 The following domain names and ports correspond to the servers where the games
 might be initiated:
 
- - canada:32400
- - cambodia:32400
- - belgium:32400
- - australia:32400
- - atlanta:32400
+ - falcon:32400
+ - groot:32400
+ - hawkeye:32400
  - houston:32400
- - hongkong:32400
- - lasvegas:32400
- - carolina:32400
- - alaska:32400
- - arizona:32400
- - hawaii:32400
+ - hulk:32400
+ - jakarta:32400
+ - london:32400
+ - montreal:32400
+ - nyc:32400
+ - paris:32400
+ - rogers:32400
+ - wanda:32400
 
 Note that communicating with any server should result the same behavior.
 However, to balance the load and to avoid servers that might be down for one
