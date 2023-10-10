@@ -169,9 +169,10 @@ on the socket used by the client.  Modify `client.c` in the following ways:
  - Comment out the line of code containing the call to `write()`.  You will
    uncomment it later.
  - Replace the call to `write()` with a call to `sendto()`.  The new line of
-   code will look nearly identical to the one you just commented out, except
-   that `sendto()` allows you to specify the recipient (remote IP address and
+   code will look similar to the one you just commented out, except that
+   `sendto()` allows you to specify the recipient (remote IP address and
    port), which is necessary if `connect()` has not been called on the socket.
+   See the usage of `connect()` to add the remote IP address and port.
 
 Re-run `make` to rebuild both binaries.  Interrupt and restart the server in
 the left "remote" pane.
@@ -222,7 +223,7 @@ server echoes back our message, we can use string operations on it--but only
 because we know that it contains the null character that we included when we
 sent the message.
 
-Now take note of how the number of calls to `send()` on the client relates to
+Now take note of how the number of calls to `sendto()` on the client relates to
 the number of `recvfrom()` calls on the server.  Let's make some modifications
 to both client and server code to better understand what is going on:
 
@@ -232,7 +233,7 @@ to both client and server code to better understand what is going on:
    - Remove the `printf()` statements that you added earlier around the
      `recvfrom()` statement.
  - Modify `client.c`:
-   - Remove the lines following `sendto()`, beginning with `getsockname()` and
+   - Remove the lines following `sendto()` beginning with `getsockname()` and
      ending with `fprintf()`, which you added previously.
    - Comment out the code that calls `read()` and `printf()`, such that it does
      not attempt to read from the socket or print what it read after writing
@@ -251,8 +252,8 @@ With the server running on the remote host, execute (again) the client command
 you ran previously in the right "local" pane, sending the same strings as
 before.
 
- 8. *How many _total_ calls to `send()` / `sendto()` / `write()` were made by
-    the client?* Hint: refer to `client.c`.
+ 8. *How many _total_ calls to `sendto()` were made by the client?* Hint: refer
+    to `client.c`.
  9. *How many messages were received by the kernel of the server-side process
     _before_ the server called `recvfrom()` the second time (i.e., _between_
     the server's first and second calls to `recvfrom()`)?*  You can assume that
