@@ -852,7 +852,7 @@ Tests 1 - 8, 11 - 12, and 16 should work at this point.
 
 ## `do_bgfg()`
 
-`do_bgfg()` is called by `[eval()](#eval)` when a command starting with `bg` or
+`do_bgfg()` is called by `builtin_cmd()` when a command starting with `bg` or
 `fg` is entered at the command line.  It takes the following as an argument:
 
  - `char **argv` - an array of strings representing a command and its arguments
