@@ -174,7 +174,7 @@ void eval(char *cmdline)
     char *newenviron[] = { NULL };
 
     int bg = parseline(cmdline, argv);
-    int numCmds = parseargs(argv, cmds, stdin_redir, stdout_redir);
+    parseargs(argv, cmds, stdin_redir, stdout_redir);
     int built_in = builtin_cmd(argv);
     if(built_in) return;
 
@@ -361,6 +361,30 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv) 
 {
+    if(isdigit(*argv[1]) && kill((int)(*argv[1]), 0))
+    {
+        printf("(%s): No such process\n", argv[1]);
+    }
+    else
+    {
+        char* temp = argv[1] + 1;
+        int pid = atoi(temp);
+        struct job_t *temp_job = getjobpid(jobs, pid);
+        if(getjobjid(jobs, pid) == NULL)
+        {
+            printf("%s: No such job\n", argv[1]);
+        }
+        else
+        {
+            temp_job->state = (strcmp(argv[0], "fg") == 0) ? FG : BG;
+
+            kill(-temp_job->pgid, SIGCONT);
+            if(strcmp(argv[0], "fg") == 0)
+            {
+                waitfg(pid);
+            }
+        }
+    }
     return;
 }
 
@@ -431,6 +455,8 @@ void sigint_handler(int sig)
     {
         printf("sigint_handler: entering\n");
     }
+    signal(SIGINT, SIG_DFL);
+    kill(-fgpid(jobs), SIGINT);
     return;
 }
 
@@ -445,6 +471,8 @@ void sigtstp_handler(int sig)
     {
         printf("sigstp_handler: entering\n");
     }
+    signal(SIGTSTP, SIG_DFL);
+    kill(-fgpid(jobs), SIGTSTP);
     return;
 }
 
