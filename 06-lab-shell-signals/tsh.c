@@ -167,6 +167,51 @@ int main(int argc, char **argv)
 */
 void eval(char *cmdline) 
 {
+    char* argv[MAXARGS];
+    int cmds[MAXARGS];
+    int stdin_redir[MAXLINE];
+    int stdout_redir[MAXLINE];
+    char *newenviron[] = { NULL };
+
+    int bg = parseline(cmdline, argv);
+    int numCmds = parseargs(argv, cmds, stdin_redir, stdout_redir);
+    int built_in = builtin_cmd(argv);
+    if(built_in) return;
+
+    sigset_t signals;
+    sigset_t old_signals;
+    sigemptyset(&signals);
+    sigaddset(&signals, SIGCHLD);
+    sigaddset(&signals, SIGINT);
+    sigaddset(&signals, SIGSTOP);
+    sigprocmask(SIG_BLOCK, &signals, &old_signals);
+
+    int ret = fork();
+    if(ret == 0)
+    {
+        sigprocmask(SIG_UNBLOCK, &signals, &old_signals);
+        int res = execve(argv[0], &argv[0] , newenviron);
+        if(res == -1)
+        {
+            printf("%s: Command not found\n", argv[0]);
+        }
+    }
+    else
+    {
+        setpgid(ret, ret);
+        int state = (bg) ? BG : FG;
+        addjob(jobs, ret, ret, state, cmdline);
+        sigprocmask(SIG_UNBLOCK, &signals, &old_signals);
+        if(!bg)
+        {
+            waitfg(ret);
+        }
+        else
+        {
+            //struct job_t *temp_job = getjobpid(jobs, ret);
+            printf("[%d] (%d) %s", getjobpid(jobs, ret)->jid, ret, cmdline);
+        }
+    }
     return;
 }
 
@@ -294,6 +339,20 @@ int parseline(const char *cmdline, char **argv)
  */
 int builtin_cmd(char **argv) 
 {
+    if(strcmp(argv[0], "quit") == 0)
+    {
+        exit(0);
+    }
+    else if(strcmp(argv[0], "fg") == 0 || strcmp(argv[0], "bg") == 0)
+    {
+        do_bgfg(argv);
+        return 1;
+    }
+    else if(strcmp(argv[0], "jobs") == 0)
+    {
+        listjobs(jobs);
+        return 1;
+    }
     return 0;     /* not a builtin command */
 }
 
@@ -310,6 +369,11 @@ void do_bgfg(char **argv)
  */
 void waitfg(pid_t pid)
 {
+    struct job_t *temp_job = getjobpid(jobs, pid);
+    while(temp_job->state == FG)
+    {
+        sleep(1);
+    }
     return;
 }
 
@@ -326,6 +390,33 @@ void waitfg(pid_t pid)
  */
 void sigchld_handler(int sig) 
 {
+    if(verbose)
+    {
+        printf("sigchld_handler: entering\n");
+    }
+
+    int res;
+
+    do
+    {
+        int wstatus;
+        res = waitpid(-1, &wstatus, WUNTRACED | WNOHANG);
+        struct job_t *temp_job = getjobpid(jobs, res);
+        if(WIFSTOPPED(wstatus))
+        {
+            temp_job->state = ST;
+            printf("Job [%d] (%d) stopped by signal %d\n", temp_job->jid, temp_job->pid, WSTOPSIG(wstatus));
+        }
+        else if(WTERMSIG(wstatus))
+        {
+            printf("Job [%d] (%d) terminated by signal %d\n", temp_job->jid, temp_job->pid, WTERMSIG(wstatus));
+            deletejob(jobs, temp_job->pid);
+        }
+        else if(WIFEXITED(wstatus))
+        {
+            deletejob(jobs, res);
+        }
+    } while(res <= 0);
     return;
 }
 
@@ -336,6 +427,10 @@ void sigchld_handler(int sig)
  */
 void sigint_handler(int sig) 
 {
+    if(verbose)
+    {
+        printf("sigint_handler: entering\n");
+    }
     return;
 }
 
@@ -346,6 +441,10 @@ void sigint_handler(int sig)
  */
 void sigtstp_handler(int sig) 
 {
+    if(verbose)
+    {
+        printf("sigstp_handler: entering\n");
+    }
     return;
 }
 

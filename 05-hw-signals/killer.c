@@ -82,17 +82,26 @@ int main(int argc, char *argv[]) {
 	case '8':
 		kill(pid, SIGHUP);
 		sleep(1);
+		kill(pid, 31);
+		sleep(1);
+		kill(pid, 10);
+		sleep(1);
 		kill(pid, 30);
 		sleep(1);
-		kill(pid, 12);
-		sleep(1);
 		kill(pid, SIGTERM);
-		sleep(10);
+		sleep(1);
 		kill(pid, SIGKILL);
 		break;
 	case '9': 
+		kill(pid, 31);
+		sleep(1);
+		kill(pid, SIGQUIT);
+		sleep(1);
+		kill(pid, 31);
+		sleep(5);
+		kill(pid, SIGKILL);
+		sleep(1);
 		break;
-
 	}
 	waitpid(pid, NULL, 0);
 }
