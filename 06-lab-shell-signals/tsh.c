@@ -361,27 +361,57 @@ int builtin_cmd(char **argv)
  */
 void do_bgfg(char **argv) 
 {
-    if(isdigit(*argv[1]) && kill((int)(*argv[1]), 0))
+    struct job_t *temp_job = NULL;
+    if(isdigit(*argv[1]))
     {
-        printf("(%s): No such process\n", argv[1]);
+        if(kill((int)(*argv[1]), 0))
+        {
+            printf("(%s): No such process\n", argv[1]);
+        }
+        else
+        {
+            char* temp = argv[1];
+            int pid = atoi(temp);
+            temp_job = getjobpid(jobs, pid);
+            if(!temp_job)
+            {
+                printf("%s: No such job\n", argv[1]);
+            }
+            else
+            {
+                temp_job->state = (strcmp(argv[0], "fg") == 0) ? FG : BG;
+                kill(-temp_job->pgid, SIGCONT);
+                if(temp_job->state == FG)
+                {
+                    waitfg(pid);
+                }
+                else
+                {
+                    printf("[%d] (%d) %s %d", temp_job->jid, pid, temp_job->cmdline, );
+                }
+            }
+        }
     }
     else
     {
         char* temp = argv[1] + 1;
-        int pid = atoi(temp);
-        struct job_t *temp_job = getjobpid(jobs, pid);
-        if(getjobjid(jobs, pid) == NULL)
+        int jid = atoi(temp);
+        temp_job = getjobjid(jobs, jid);
+        if(!temp_job)
         {
             printf("%s: No such job\n", argv[1]);
         }
         else
         {
             temp_job->state = (strcmp(argv[0], "fg") == 0) ? FG : BG;
-
             kill(-temp_job->pgid, SIGCONT);
-            if(strcmp(argv[0], "fg") == 0)
+            if(temp_job->state == FG)
             {
-                waitfg(pid);
+                waitfg(jid);
+            }
+            else
+            {
+                printf("[%d] (%d) %s", jid, temp_job->pid, argv);
             }
         }
     }
