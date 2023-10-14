@@ -824,16 +824,16 @@ manipulation:
 The following domain names and ports correspond to the servers where the games
 might be initiated:
 
+ - alaska:32400
+ - arkansas:32400
+ - california:32400
+ - connecticut:32400
  - falcon:32400
+ - florida:32400
  - groot:32400
+ - hawaii:32400
  - hawkeye:32400
- - houston:32400
  - hulk:32400
- - jakarta:32400
- - london:32400
- - montreal:32400
- - nyc:32400
- - paris:32400
  - rogers:32400
  - wanda:32400
 
