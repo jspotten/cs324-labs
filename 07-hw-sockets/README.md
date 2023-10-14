@@ -69,7 +69,7 @@ both communication types.
     _different_ from the one you are already on.  See a list of machine names
     [here](https://docs.cs.byu.edu/doku.php?id=open-lab-layout):
 
-    Fall 2023 Note: At the moment, only machines within the "Cities" and
+    Fall 2023 Note: At the moment, only machines within the "States" and
     "Marvel" labs appear to be reliable choices.
 
     (Replace "username" with your actual CS username and "hostname" with the
