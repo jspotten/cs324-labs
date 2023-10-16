@@ -356,7 +356,7 @@ int builtin_cmd(char **argv)
         listjobs(jobs);
         return 1;
     }
-    return 0;     /* not a builtin command */
+    return 0;
 }
 
 /* 
@@ -366,39 +366,36 @@ void do_bgfg(char **argv)
 {
     if(argv[1] == NULL)
     {
-        printf("%s: argument must be a PID or %%jobid argument\n", argv[0]);
+        printf("%s command requires PID or %%jobid argument\n", argv[0]);
+    }
+    else if(isalpha(argv[1][0]))
+    {
+        printf("%s: argument must be a PID or %%jobid\n", argv[0]);
     }
     else
     {
         struct job_t *temp_job;
         if(isdigit(*argv[1]))
         {
-            // if(kill((int)(*argv[1]), 0) == -1)
-            // {
-            //     printf("(%s): No such process\n", argv[1]);
-            // }
-            // else
+            char* temp = argv[1];
+            int pid = atoi(temp);
+            temp_job = getjobpid(jobs, pid);
+            if(temp_job == NULL)
             {
-                char* temp = argv[1];
-                int pid = atoi(temp);
-                temp_job = getjobpid(jobs, pid);
-                if(temp_job == NULL)
+                printf("(%s): No such process\n", argv[1]);
+            }
+            else
+            {
+                temp_job->state = (strcmp(argv[0], "fg") == 0) ? FG : BG;
+                int pgid = temp_job->pgid;
+                kill(-pgid, SIGCONT);
+                if(temp_job->state == FG)
                 {
-                    printf("%s: No such process\n", argv[1]);
+                    waitfg(pid);
                 }
                 else
                 {
-                    temp_job->state = (strcmp(argv[0], "fg") == 0) ? FG : BG;
-                    int pgid = temp_job->pgid;
-                    kill(-pgid, SIGCONT);
-                    if(temp_job->state == FG)
-                    {
-                        waitfg(pid);
-                    }
-                    else
-                    {
-                        printf("[%d] (%d) %s", temp_job->jid, pid, temp_job->cmdline);
-                    }
+                    printf("[%d] (%d) %s", temp_job->jid, pid, temp_job->cmdline);
                 }
             }
         }
@@ -415,7 +412,7 @@ void do_bgfg(char **argv)
             {
                 temp_job->state = (strcmp(argv[0], "fg") == 0) ? FG : BG;
                 int pgid = temp_job->pgid;
-                //kill(-pgid, SIGCONT);
+                kill(-pgid, SIGCONT);
                 if(temp_job->state == FG)
                 {
                     waitfg(temp_job->pid);
@@ -463,11 +460,9 @@ void sigchld_handler(int sig)
     }
 
     int res;
-
-    do
+    int wstatus;
+    while((res = waitpid(-1, &wstatus, WUNTRACED | WNOHANG)) > 0)
     {
-        int wstatus;
-        res = waitpid(-1, &wstatus, WUNTRACED | WNOHANG);
         struct job_t *temp_job = getjobpid(jobs, res);
         if(WIFSTOPPED(wstatus))
         {
@@ -483,7 +478,7 @@ void sigchld_handler(int sig)
         {
             deletejob(jobs, res);
         }
-    } while(res <= 0);
+    }
     return;
 }
 
@@ -503,8 +498,6 @@ void sigint_handler(int sig)
     {
         printf("sigint_handler: entering\n");
     }
-    // signal(SIGINT, SIG_DFL);
-    // kill(-fgpid(jobs), SIGINT);
     return;
 }
 
@@ -524,8 +517,6 @@ void sigtstp_handler(int sig)
     {
         printf("sigstp_handler: entering\n");
     }
-    // signal(SIGTSTP, SIG_DFL);
-    // kill(-fgpid(jobs), SIGTSTP);
     return;
 }
 
