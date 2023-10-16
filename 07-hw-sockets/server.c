@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 			/* Populate remote_addr_str (a string) with the
 			 * presentation format of the IPv4 address.*/
 			inet_ntop(addr_fam, &remote_addr_in.sin_addr,
-					remote_addr_str, addr_len);
+					remote_addr_str, INET6_ADDRSTRLEN);
 			/* Populate remote_port with the value of the port, in
 			 * host byte order (as opposed to network byte order).
 			 * */
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
 			/* Populate remote_addr_str (a string) with the
 			 * presentation format of the IPv6 address.*/
 			inet_ntop(addr_fam, &remote_addr_in6.sin6_addr,
-					remote_addr_str, addr_len);
+					remote_addr_str, INET6_ADDRSTRLEN);
 			/* Populate remote_port with the value of the port, in
 			 * host byte order (as opposed to network byte order).
 			 * */
