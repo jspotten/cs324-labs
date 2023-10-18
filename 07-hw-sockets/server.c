@@ -92,23 +92,22 @@ int main(int argc, char *argv[]) {
 
 	/* SECTION C - interact with clients; receive and send messages */
 
-	/* Read datagrams and echo them back to sender */
+	/* Variables associated with remote address and port */
+	struct sockaddr_in remote_addr_in;
+	struct sockaddr_in6 remote_addr_in6;
+	struct sockaddr *remote_addr;
+	char remote_addr_str[INET6_ADDRSTRLEN];
+	unsigned short remote_port;
 
+	if (addr_fam == AF_INET) {
+		remote_addr = (struct sockaddr *)&remote_addr_in;
+	} else {
+		remote_addr = (struct sockaddr *)&remote_addr_in6;
+	}
+
+	/* Read datagrams and echo them back to sender */
 	for (;;) {
 		char buf[BUF_SIZE];
-
-		/* Variables associated with remote address and port */
-		struct sockaddr_in remote_addr_in;
-		struct sockaddr_in6 remote_addr_in6;
-		struct sockaddr *remote_addr;
-		char remote_addr_str[INET6_ADDRSTRLEN];
-		unsigned short remote_port;
-
-		if (addr_fam == AF_INET) {
-			remote_addr = (struct sockaddr *)&remote_addr_in;
-		} else {
-			remote_addr = (struct sockaddr *)&remote_addr_in6;
-		}
 
 		/* addrlen needs to be initialized before the call to
 		 * recvfrom().  See the man page for recvfrom(). */
