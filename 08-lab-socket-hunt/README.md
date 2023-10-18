@@ -871,7 +871,8 @@ _all_ levels.
 Your score will be computed out of a maximum of 100 points based on the
 following distribution:
 
- - 25 points for each of 4 levels (0 through 3)
+ - 55 points for passing level 0
+ - 15 points each for passing levels 1 through 3
  - For each level, 5 points for each seed:
    - 7719
    - 33833
