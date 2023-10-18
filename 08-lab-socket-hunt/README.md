@@ -251,7 +251,7 @@ To keep track of all this, you might declare variables like the following:
 	struct sockaddr *local_addr;
 ```
 
-See the [sockets homework assignment](../hw-sockets) for example code.
+See the [sockets homework assignment](../07-hw-sockets) for example code.
 
 A note about the `local_addr` and `remote_addr` variables.  The functions
 `sendto()`, `recvfrom()`, and `bind()` take type `struct sockaddr *`
