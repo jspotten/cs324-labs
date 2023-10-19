@@ -110,7 +110,7 @@ Your program should have the following usage:
 
 Store each of the arguments provided on the command line (i.e., the `argv`
 argument to `main()`) in variables.  Note that `port`, `level`, and `seed` are
-all integers, so you will want to convert them to integers with `atoi()`.
+numerical values, so you will want to convert them to integers with `atoi()`.
 However, because `getaddrinfo()` takes a `char *` for port, you might want to
 maintain a string (`char []`) version of the port as well.
 
@@ -297,7 +297,7 @@ address family being used, you can simply use `local_addr` in the calls to
 `bind()` and friends.
 
 When everything is set up, send your message using `sendto()`.  Then read the
-server's response with `recvfrom()` call.  Remember, it is just one call to
+server's response with a call to `recvfrom()` Remember, it is just one call to
 each!  Store the return value of  `recvfrom()`, which reflects the number of
 bytes you received.  Unlike the [initial request](#initial-request)
 you sent, which is always eight bytes, the size of the response is variable
@@ -899,10 +899,10 @@ might be initiated:
  - rogers:32400
  - wanda:32400
 
-Note that communicating with any server should result the same behavior.
-However, to balance the load and to avoid servers that might be down for one
-reason or another, we have created the following script, which will show
-both a status of servers the *primary* machine that *you* should use:
+Note that all servers provide exactly the same behavior.  However, to balance
+the load and to avoid servers that might be down for one reason or another, we
+have created the following script, which will show both a status of servers the
+*primary* machine that *you* should use:
 
 ```
 ./server_status.py
