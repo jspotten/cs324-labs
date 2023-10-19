@@ -37,7 +37,7 @@ both communication types.
     programs that will communicate with each other as client and server,
     respectively.
 
- 3. Review the [Strings, I/O, and Environment](../hw-strings-io-env)
+ 3. Review the [Strings, I/O, and Environment](../01d-hw-strings-io-env)
     assignment.  Reviewing the principles on strings and I/O will greatly help
     you in this assignment!
 
@@ -219,7 +219,7 @@ null character for this particular program:
 string (i.e., because we wrote the program!).  But `write()` is only concerned
 with bytes, so writing with argument `len` will result in writing one more
 character than the string is long--the null character.  See
-[Strings, I/O, and Environment](../hw-strings-io-env) for more.  When the
+[Strings, I/O, and Environment](../01d-hw-strings-io-env) for more.  When the
 server echoes back our message, we can use string operations on it--but only
 because we know that it contains the null character that we included when we
 sent the message.
@@ -538,7 +538,8 @@ Modify `client.c`:
    printable characters followed by a null-terminator.  It might be an image, a
    movie, an executable, or something else. Therefore, you should not use
    `printf()` or any other string operators unless you _know_ it is a string
-   (see the [Strings, I/O, and Environment](../hw-strings-io-env#printf-and-friends)
+   (see the
+   [Strings, I/O, and Environment](../01d-hw-strings-io-env#printf-and-friends)
    assignment).  Instead, use `write()`.
 
    Even in the case where you _know_ bytes read from the socket are printable

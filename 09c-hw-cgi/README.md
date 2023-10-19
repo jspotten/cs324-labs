@@ -46,8 +46,8 @@ Remember the following:
 
 You should recall that there is a way that you can test your CGI program
 *without* a Web server.  See
-[Strings, IO, and Environment](../hw-strings-io-env) and
-[BYU Bandit](../hw-byu-bandit) for examples.
+[Strings, IO, and Environment](../01d-hw-strings-io-env) and
+[BYU Bandit](../02-hw-byu-bandit) for examples.
 
 Note: this whole program will be much simpler than you might think, but you
 might need to review CGI from the book and slides.
