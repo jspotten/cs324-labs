@@ -111,9 +111,11 @@ Your program should have the following usage:
 
 Store each of the arguments provided on the command line (i.e., the `argv`
 argument to `main()`) in variables.  Note that `port`, `level`, and `seed` are
-numerical values, so you will want to convert them to integers with `atoi()`.
-However, because `getaddrinfo()` takes a `char *` for port, you might want to
-maintain a string (`char []`) version of the port as well.
+numerical values and should ultimately be stored as variables of type `int`.
+Because they will be received as strings from the command line (type `char *`),
+you will want to convert them to integers with `atoi()`.  However, because
+`getaddrinfo()` takes a `char *` for port, you might also want to maintain a
+string (`char []`) version of the port as well.
 
 It would be a good idea here to check that all command-line variables have been
 stored appropriately from the command line.  Create some print statements to
