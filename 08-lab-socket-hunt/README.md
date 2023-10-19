@@ -34,6 +34,7 @@ remote port assignment, IPv4 and IPv6, message parsing, and more.
    - [Op Codes](#op-codes)
    - [UDP Socket Behaviors](#udp-socket-behaviors)
    - [Testing Servers](#testing-servers)
+   - [Logs](#logs)
  - [Automated Testing](#automated-testing)
  - [Evaluation](#evaluation)
  - [Submission](#submission)
@@ -833,6 +834,8 @@ Any error codes sent by the server will be one of the following:
  - 136: A bad user id was sent the server on the initial request, such that a
    username could not be found on the system running the server.
  - 137: An unknown error occurred.
+ - 138: The message was sent using the wrong address family (i.e., IPv4 or
+   IPv6).
 
 
 ## Op-Codes
@@ -907,6 +910,14 @@ have created the following script, which will show both a status of servers the
 ```
 ./server_status.py
 ```
+
+
+## Logs
+
+All communications received by the servers are logged to files that are
+accessible to the TAs.  If you are having trouble tracking down the cause of
+faulty behavior, you may ask a TA to look for entries in the logs corresponding
+to your activity.
 
 
 # Automated Testing
