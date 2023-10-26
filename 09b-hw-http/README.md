@@ -22,12 +22,12 @@ local HTTP server.
 
  1. Read the following in preparation for this assignment:
 
-    - Sections ?? in the book
+    - Section 11.5 in the book
 
     Additionally, man pages for the following are also referenced throughout the
     assignment:
 
-    - ??
+    - `curl(1)`
 
  2. Either log on to a BYU CS lab workstation directly or log on remotely using
     SSH.  To log in using `ssh`, open a terminal and use the following `ssh`
@@ -145,7 +145,7 @@ When the `-d` option is used, the request type used by `curl` is changed from
 
 URLs:
 
- e. `http://host:port/cgi-bin/myprog?univ=byu&class=CS+324&msg=hello+%3D+world%21`
+ e. `http://host:port/cgi-bin/myprog?univ=byu&class=CS324&msg=hello%3Dworld%21`
 
 Use the output from running the `curl` commands on the URLs to answer the
 questions that follow.  The output you see for each use of the `curl` command
@@ -229,8 +229,12 @@ URLs:
 
  h. `http://localhost/socket.jpg`
 
- i. `http://example.com/cgi-bin/foo?univ=byu&class=CS+324&msg=hello+%3D+world%21`
+ i. `http://example.com/cgi-bin/foo?univ=byu&class=CS324&msg=hello%3Dworld%21`
 
+Note that to answer some questions it might be helpful to refer to the output
+of the `curl` commands in the [previous section](#part-1-http).  Also note that
+for all questions except 24 through 25, the answer comes directly from the URL
+the in the question.
 
 Questions:
 
@@ -242,11 +246,11 @@ Questions:
 
  17. For URL (g), what remote port will an HTTP client pass to `connect()`?
 
- 18. For URL (f), what path will be sent by the client in the first line of the
-     HTTP request?
+ 18. For URL (f), what is the complete path value that will be sent by the
+     client in the first line of the HTTP request?
 
- 19. For URL (i), what path will be sent by the client in the first line of the
-     HTTP request?
+ 19. For URL (i), what is the complete path value that will be sent by the
+     client in the first line of the HTTP request?
 
  20. For URL (f), what value will be sent by the client as the value of the
      "Host" header?
@@ -259,10 +263,15 @@ Questions:
 
  23. For URL (i), what is the value of the query string?
 
- 24. For URL (i), to what ASCII character will the character "+" be decoded by
-     a CGI program?
+For questions 24 and 25, refer to
+[RFC 3986 Section 2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1),
+which is the official specification for Uniform Resource Identifiers (URIs),
+which is a more general category that includes URLs.
 
- 25. For URL (i), to what ASCII character will the character sequence "%3D" be
+ 24. For URL (i), to what ASCII character will the character sequence "%3D" be
+     decoded by a CGI program?
+
+ 25. For URL (i), to what ASCII character will the character sequence "%21" be
      decoded by a CGI program?
 
 
