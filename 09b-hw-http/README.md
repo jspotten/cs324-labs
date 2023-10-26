@@ -350,6 +350,39 @@ Note that using skills you learned in the
 [BYU bandit assignment](../02-hw-byu-bandit) you can also test your CGI program
 _without_ an HTTP server.  That is, using the shell, you can artificially set
 the environment variables that the CGI program expects, provide data to the
-standard input of the CGI using a pipe or input redirection, and observe the
-output of the CGI program on the terminal--which would have had the socket
-duplicated onto it in the case of a real HTTP server using CGI.
+standard input of the CGI using a command pipeline, and observe the output of
+the CGI program on the terminal--which would have had the socket duplicated
+onto it in the case of a real HTTP server using CGI.
+
+Run your CGI program from the command line, such that it behaves as if an HTTP
+server had received a request with the following inputs:
+
+ - Query string: `univ=byu&class=CS324&msg=hello%3Dworld%21`
+ - Request body: `username=user&password=pw`
+
+Note the following about setting environment variables for a program that you
+run from your shell:
+
+ - Multiple environment variables can be set by spacing-delimiting them.  For
+   example:
+
+   ```
+   FOO=bar ABC=123 prog
+   ```
+
+ - If setting environment variables for a command in a pipeline, place the
+   environment variables immediately before that command.  For example:
+
+   ```
+   prog1 | FOO=bar ABC=123 prog2
+   ```
+
+When the terminal output of your CGI program looks right with the above inputs,
+add `sha1sum` to the end of the pipeline, so you get the SHA1SUM of the CGI
+program output.
+
+ 26. What is the SHA1SUM of the CGI program when run with the above inputs?
+     Hint: it should start with `c0140d`.
+
+ 27. What is the command pipeline you used to run the CGI program with the
+     above inputs and produce the SHA1SUM in the previous question?
