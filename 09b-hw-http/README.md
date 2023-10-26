@@ -28,6 +28,8 @@ local HTTP server.
     assignment:
 
     - `curl(1)`
+    - `getaddrinfo(3)`
+    - `ascii(7)`
 
  2. Either log on to a BYU CS lab workstation directly or log on remotely using
     SSH.  To log in using `ssh`, open a terminal and use the following `ssh`
@@ -266,7 +268,8 @@ Questions:
 For questions 24 and 25, refer to
 [RFC 3986 Section 2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1),
 which is the official specification for Uniform Resource Identifiers (URIs),
-which is a more general category that includes URLs.
+which is a more general category that includes URLs.  See also the man page for
+`ascii(7)`.
 
  24. For URL (i), to what ASCII character will the character sequence "%3D" be
      decoded by a CGI program?
