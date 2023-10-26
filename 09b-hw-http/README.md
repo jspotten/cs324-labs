@@ -199,8 +199,7 @@ Questions:
  6. How does the client know when it has received the entire response body?
 
  7. How does the client know the type of the content returned by the server, so
-    that it (the client) can render it properly?  Hint: it is _not_ by the file
-    extension specified in the path (if any).
+    that it (the client) can render it properly?
 
  8. For URL (a), what type of content is returned in the response body?
 
