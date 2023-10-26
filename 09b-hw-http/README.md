@@ -293,7 +293,8 @@ information on this.
 
 For this part of the assignment, you will write a CGI program--that is, the one
 that is executed by the HTTP server.  Call your program `myprog1.c`.  It should
-have the same functionality as the `myprog` in your `cgi-bin` directory.
+have _mostly_ the same functionality as the `myprog` in your `cgi-bin`
+directory.
 
  - Retrieve the `CONTENT_LENGTH` and `QUERY_STRING` environment variables,
    which will have been set by the HTTP server using the `Content-Length`
@@ -310,25 +311,37 @@ have the same functionality as the `myprog` in your `cgi-bin` directory.
  - Create the request body, so it contains the following contents:
 
    ```
-   Hello world
+   Hello CS324
    Query string: [query string goes here...]
    Request body: [request body goes here...]
    ```
 
-   You might find the `sprintf()` function helpful for this.
+   You might find the `sprintf()` function helpful for this.  Also, note that
+   unlike with the response headers, each line in the body should simply end
+   with `'\n'`; there is no need to include `'\r'`.
 
- - Send the sending "Content-Type" and "Content-Length" headers of the HTTP
-   response to the client.  The type should be "text/plain", and length is the
-   total length of the response body--which includes all bytes after the
-   end-of-headers sequence.  The server will have already sent the first line
-   of the response and some headers.  Your program should send the remaining
-   headers along with the the end-of-headers sequence.
+ - Send "Content-Type" and "Content-Length" headers of the HTTP response to the
+   client.  The type should be "text/plain", and length is the total length of
+   the response body--which includes all bytes after the end-of-headers
+   sequence.  The server will have already sent the first line of the response
+   and some headers.  Your program should send the remaining headers along with
+   the the end-of-headers sequence.
 
    Each header should end with `"\r\n"`, and after the final headers, there
    should be a blank line; that is, this character sequence should follow the
    last header: `"\r\n\r\n"`.
 
+ - Send the request body you created earlier.
+
 Test your program by compiling it and placing the resulting binary in
 `www/cgi-bin`.  Then run `curl` against it using URL (e) above, substituting
 "myprog1" for "myprog".  Try a few different values for the query string and
 the request body.
+
+Note that using skills you learned in the
+[BYU bandit assignment](../02-hw-byu-bandit) you can also test your CGI program
+_without_ an HTTP server.  That is, using the shell, you can artificially set
+the environment variables that the CGI program expects, provide data to the
+standard input of the CGI using a pipe or input redirection, and observe the
+output of the CGI program on the terminal--which would have had the socket
+duplicated onto it in the case of a real HTTP server using CGI.
