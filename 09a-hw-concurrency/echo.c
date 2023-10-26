@@ -1,20 +1,30 @@
 /*
  * echo - read and echo text lines until client closes connection
  */
-/* $begin echo */
-#include "csapp.h"
 
-void echo(int connfd) 
-{
-    size_t n; 
-    char buf[MAXLINE]; 
-    rio_t rio;
+#include <stdio.h>
+#include <unistd.h>
 
-    Rio_readinitb(&rio, connfd);
-    while((n = Rio_readlineb(&rio, buf, MAXLINE)) != 0) { //line:netp:echo:eof
+#define MAXLINE 512
+
+void echo(int connfd) {
+    size_t n;
+    char buf[MAXLINE];
+
+    while ((n = read(connfd, buf, MAXLINE)) > 0) {
 	printf("server received %d bytes\n", (int)n);
-	Rio_writen(connfd, buf, n);
+
+	int nsent = 0;
+	int totsent = 0;
+	while (nsent != n) {
+		if ((nsent = write(connfd, buf + totsent, n - totsent)) < 0) {
+			perror("write");
+			break;
+		}
+		totsent += nsent;
+	}
+    }
+    if (n < 0) {
+	perror("read");
     }
 }
-/* $end echo */
-
