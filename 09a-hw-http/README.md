@@ -80,7 +80,7 @@ local HTTP server.
 
     ```
     cd www
-    python3 -m http.server --cgi -p 'HTTP/1.0' port
+    python3 -m http.server --cgi port
     ```
 
     This starts a python-based HTTP server in the directory "www" listening on
@@ -88,14 +88,13 @@ local HTTP server.
     support CGI.  That means that paths starting with "/cgi-bin/" should be
     treated as CGI programs; that is, they are executed by the server and their
     output sent back to the client--as opposed the server sending their file
-    contents to the client.  Finally, the `-p` option indicates that the server
-    should use the designated version of HTTP, in this case version 1.0.  For
-    the purposes of this assignment, the difference between HTTP/1.1 and
-    HTTP/1.0 is that an HTTP/1.1 server can receive multiple requests,
-    back-to-back, over the same TCP connection, whereas an HTTP/1.0 server
-    closes its end of the connection after transmitting the entire HTTP
-    response.  In this latter case, the client's call to `read()` results in a
-    return value of 0, which is, effectively end-of-file (EOF).
+    contents to the client.  Note that this HTTP server uses HTTP/1.0.  For the
+    purposes of this assignment, the difference between HTTP/1.1 and HTTP/1.0
+    is that an HTTP/1.1 server can receive multiple requests, back-to-back,
+    over the same TCP connection, whereas an HTTP/1.0 server closes its end of
+    the connection after transmitting the entire HTTP response.  In this latter
+    case, the client's call to `read()` results in a return value of 0, which
+    is, effectively, end-of-file (EOF).
 
 
 # Part 1: HTTP
