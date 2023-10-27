@@ -262,7 +262,8 @@ Questions:
  22. For URL (h), what value will be sent by the client as the value of the
      "Host" header?
 
- 23. For URL (i), what is the value of the query string?
+ 23. For URL (i), what is the value of the query string?  Note that the
+     question mark (`?`) is not part of the query string.
 
 For questions 24 and 25, refer to
 [RFC 3986 Section 2.1](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1),
