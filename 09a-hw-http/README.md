@@ -353,36 +353,60 @@ Note that using skills you learned in the
 [BYU bandit assignment](../02-hw-byu-bandit) you can also test your CGI program
 _without_ an HTTP server.  That is, using the shell, you can artificially set
 the environment variables that the CGI program expects, provide data to the
-standard input of the CGI using a command pipeline, and observe the output of
-the CGI program on the terminal--which would have had the socket duplicated
-onto it in the case of a real HTTP server using CGI.
+standard input of the CGI by using a pipe that is connected to the standard
+output of another program, and observe the output of the CGI program on the
+terminal.  Of course, in the case of a CGI program that was executed by an HTTP
+server, the output would have gone to the socket connected to the client
+because that socket would have been duplicated onto standard output.  But
+because standard has not been modified, here you will see it on the terminal.
 
-Run your CGI program from the command line, such that it behaves as if an HTTP
-server had received a request with the following inputs:
+Using these concepts, your job is to determine how to run your CGI program as a
+command-line pipeline, passing it the following inputs, as if it had been
+executed (i.e., with `execve()`) by and HTTP server that understood CGI:
 
  - Query string: `univ=byu&class=CS324&msg=hello%3Dworld%21`
  - Request body: `username=user&password=pw`
 
-Note the following about setting environment variables for a program that you
-run from your shell:
+Because previous assignments only involved a very simple use of environment
+variables, please note the following additional information on environment
+variables:
+
+ - Quotes should be used to enclose values that contain spaces or other
+   characters that might otherwise be interpreted by the shell.  For example,
+   if you wanted to set the value of the environment variable `FOO` to
+   `bar&baz`, the following is _incorrect_:
+
+   ```
+   FOO=bar&baz
+   ```
+
+   In the above example, the shell interprets `&` as the background operator
+   for the command `FOO=bar`!
+
+   This is the correct way to set the environment variable:
+
+   ```
+   FOO="bar&baz"
+   ```
 
  - Multiple environment variables can be set by spacing-delimiting them.  For
    example:
 
    ```
-   FOO=bar ABC=123 prog
+   FOO="bar&baz" ABC="123 XYZ" cmd
    ```
 
  - If setting environment variables for a command in a pipeline, place the
    environment variables immediately before that command.  For example:
 
    ```
-   prog1 | FOO=bar ABC=123 prog2
+   cmd1 | FOO="bar&baz" ABC="123 XYZ" cmd2
    ```
 
-When the terminal output of your CGI program looks right with the above inputs,
-add `sha1sum` to the end of the pipeline, so you get the SHA1SUM of the CGI
-program output.
+The terminal output of your CGI program should include the last of the headers,
+the end-of-headers sequence, and the response body.  When it looks right, given
+the above inputs, add `sha1sum` to the end of the pipeline, so you get the
+SHA1SUM of the CGI program output.
 
  26. What is the SHA1SUM of the CGI program when run with the above inputs?
      Hint: it should start with `c0140d`.
