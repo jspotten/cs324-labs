@@ -256,7 +256,7 @@ before.
  8. *How many _total_ calls to `sendto()` were made by the client?* Hint: refer
     to `client.c`.
  9. *How many messages had been received by the server's kernel and were still
-    waiting to be read by the server-side process at the moment the server
+    waiting to be read by the server-side process immediately before the server
     called `recvfrom()` for the second time?* You can assume that the messages
     were sent immediately when the client called `write()` and that any network
     delay was negligible.
@@ -404,10 +404,10 @@ pane), run the following in the right "local" pane:
  19. *How many total calls to `send()` / `write()` were made by the client?*
      Hint: refer to `client.c`.
  20. *How many messages had been received by the server's kernel and were still
-     waiting to be read by the server-side process at the moment the server
-     called `recv()`?*   You can assume that the messages were sent immediately
-     when the client called `write()` and that any network delay was
-     negligible.
+     waiting to be read by the server-side process immediately before the
+     server called `recv()`?*   You can assume that the messages were sent
+     immediately when the client called `write()` and that any network delay
+     was negligible.
  21. *How many total calls to `recv()` were required for the server process to
      read all of the messages/bytes that were sent?*  Hint: look at the server
      output, and refer to `server.c`.  Explain how and why this behavior is
