@@ -206,13 +206,13 @@ Questions:
 
  9. For URL (b), what type of content is returned in the response body?
 
- 10. For URL (d), what type of content is returned in the response body?
+ 10. For URL (e), what type of content is returned in the response body?
 
  11. For URL (a), how large (i.e., how many bytes) is the response body?
 
  12. For URL (b), how large (i.e., how many bytes) is the response body?
 
- 13. For URL (d), how large (i.e., how many bytes) is the response body?
+ 13. For URL (e), how large (i.e., how many bytes) is the response body?
 
 
 # Part 2: URLs
