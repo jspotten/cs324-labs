@@ -373,7 +373,7 @@ The following is an explanation of each field:
    [4](#level-4-extra-credit) for a detailed description of each.
 
  - Bytes `n + 2` - `n + 3`: These bytes, an `unsigned short` in network byte
-   order is the parameter used in conjunction with the op-code.  For op-code 0,
+   order, is the parameter used in conjunction with the op-code.  For op-code 0,
    the field exists, but can simply be ignored.
 
  - Bytes `n + 4` - `n + 7`: These bytes, an `unsigned int` in network byte
@@ -385,28 +385,47 @@ and the nonce using the hints in the [message formatting](#message-formatting)
 section), storing them in variables of the appropriate types, so you can work
 with them.  For example, if a value has a length of one byte, then use an
 `unsigned char`, or if a value has a length of two bytes, use an
-`unsigned short`, etc. Print them out to verify that you have extracted them
-properly, and pay attention to endian-ness for variables that consume multiple
-bytes.  For example, if you receive the nonce 0x12345678, then printing out the
-value of the variable in which you have stored the nonce, e.g., with:
+`unsigned short`, etc.  Because the treasure chunk will consist of ASCII
+characters, it can be stored using a `char []`.  However, remember to add a
+null byte after the treasure chunk, or `printf()` will not know how to treat it
+properly.
+
+Print out the value of each variable to verify that you
+have extracted them properly, and pay attention to endian-ness for variables
+that consume multiple bytes.  For example, suppose you you receive a directions
+response that results in the following output from `print_bytes()`:
+
+```bash
+00: 04 61 62 63  64 01 BE EF  . a b c d . . .
+08: 12 34 56 78               . 4 V x        
+```
+
+printing out the value of the variables associated with each value extracted
+from the directions response.  For example:
 
 ```c
-printf("%x", nonce);
+printf("%x\n", chunklen);
+printf("%s\n", chunk); // <-- Remember, this will only work
+                     // if you have null-terminated the chunk!
+printf("%x\n", opcode);
+printf("%x\n", opparam);
+printf("%x\n", nonce);
 ```
 
 should result in the following output:
 
 ```
+4
+abcd
+1
+beef
 12345678
 ```
 
-Because the treasure chunk will consist of ASCII characters, it can be stored
-using a `char []`.  However, remember to add a null byte after the treasure
-chunk, or `printf()` will not know how to treat it properly.
-
-Also, the op-param has no use for level 0, and the value might actually be 0.
-This means that endian-ness for op-param is hard to check at this point.  But
-you can check it in future levels when the value is non-zero.
+Note that the op-param has no use for level 0, and the value might actually
+be 0.  This means that endian-ness for op-param is hard to check at this point.
+But you can check the others, and you can check op-param in future levels when
+the value is non-zero.
 
 You will be sending the nonce (well, a variant of it) back to the server, in
 exchange for additional chunks, until you have received the whole treasure.
@@ -439,8 +458,8 @@ and will have the following format:
 
 Build your follow-up request using the guidance in the
 [message formatting helps](#message-formatting) section, and use
-`print_bytes()` to make sure it looks the way it should.  Re-build and re-run
-your program:
+`print_bytes()` to make sure it looks the way it should.  Make sure the bytes
+are in the correct order!  Re-build and re-run your program:
 
 ```bash
 make
@@ -692,8 +711,9 @@ following to prepare the next directions request:
      an `unsigned short` (16 bits), so you will want to keep track of their
      _sum_ with an `unsigned int` (32 bits).
  - Add 1 to the nonce, and prepare the new directions request with that value.
- - Send the directions request with the same local and remort ports with which
-   the most recent directions response was received.
+ - Send the directions request with the same local and remote ports with which
+   the most recent directions request was sent--not the ones from which you
+   received the `m` datagrams.
 
 
 ### Checkpoint 9
@@ -789,7 +809,7 @@ int main() {
 	int i = 0;
 	bzero(buf, BUFSIZE);
 
-	memcpy(&buf[6], &val, 2);
+	memcpy(&buf[6], &val, sizeof(unsigned short));
 	for (i = 0; i < BUFSIZE; i++) {
 		printf("%x ", buf[i]);
 	}
@@ -804,18 +824,25 @@ in the *reverse* order from what you might expect.  If so, is because the
 architecture that you are using is *little endian*.  This is problematic for
 network communications, which expect integers to be in *network* byte order
 (i.e., *big endian*).  To remedy this, there are functions provided for you by
-the system, including `htons()` and `ntohs()` ("host to network short" and
-"network to host short").  See their man pages for more information.  Try
-modifying the code above to assign `htons(0xabcd)` to `val` instead, and see
-how the output changes.
-
-The example above is specific to storing an `unsigned short` integer value into
-an arbitrary memory location (in this case an array of `unsigned char`) in
-network byte order.  You will need to use this principle to figure out how to
-do similar conversions for other cirumstances, including working with integers
-other than `unsigned short` and extracting integers of various lengths from
-arrays of `unsigned char`.  Hint: see the man page for `ntohs(3)` for related
-functions.
+the system.  In order to use mult-byte integers for any computation (e.g.,
+printing them out, incrementing them, using them to index into an array, etc.),
+those integers need to be in *host* byte order.  For short integers (i.e.,
+`short` and `unsigned short`), the proper functions to use are the following:
+ - `htons()` - "host to network short", convert the byte order from host order
+   to network order.
+ - `ntohs()` - "network to host short", convert the byte order from network
+   order to host order.
+If you modify the code above to use `val = htons(0xabcd)` you will see that the
+output now changes such that the bytes are in the proper order.  For long
+integers (including `int` and `unsigned int`), the proper functions to use are
+the following:
+ - `htonl()` - "host to network long", convert the byte order from host order
+   to network order.
+ - `ntohl()` - "network to host long", convert the byte order from network
+   order to host order.
+Just as you need to convert any multi-byte integer that you _received_ from the
+the network to host byte order, for any multi-byte integer that you wish to
+_send_ in an outgoing message, you need to convert it to network byte order.
 
 
 ## Error Codes
