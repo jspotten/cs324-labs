@@ -454,17 +454,27 @@ and will have the following format:
 
  - Bytes 0 - 3: an `unsigned int` having a value of one more than the nonce
    most recently sent by the server, in network byte order.  For example, if
-   the server previously sent 100 as the nonce, then this value would be 101.
+   the server previously sent 0x12345678 as the nonce, then this value should
+   be 0x12345679.
 
 Build your follow-up request using the guidance in the
 [message formatting helps](#message-formatting) section, and use
-`print_bytes()` to make sure it looks the way it should.  Make sure the bytes
-are in the correct order!  Re-build and re-run your program:
+`print_bytes()` to make sure it looks the way it should.
+
+Re-build and re-run your program:
 
 ```bash
 make
 ./treasure_hunter server 32400 0 7719
 ```
+
+Make sure the bytes are in the correct order!  For example, if you received the
+nonce 0x12345678 as the nonce, then `print_bytes()` should produce the
+following for the return message:
+
+   ```bash
+   00: 12 34 56 79               . 4 V y        
+   ```
 
 If everything looks good, then use `sendto()` to send your follow-up request
 and `recvfrom()` to receive your next directions response.
