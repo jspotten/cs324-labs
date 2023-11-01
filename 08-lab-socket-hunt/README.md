@@ -964,6 +964,18 @@ have created the following script, which will show both a status of servers the
    up and move on.
  - Place helpful print statements in your code, for debugging.  Use
    `fprintf(stderr, ...)` to print to standard error.
+ - Use the program `strace` to show you where you are sending datagrams with
+   `sendto()` or from where you are receiving them with `recvfrom()`.  For
+   example:
+   ```bash
+   strace -e trace=sendto,recvfrom ./treasure_hunter ...
+   ```
+   calls `strace` on `./treasure_hunter`, showing only calls to `sendto()` and
+   `recvfrom()`.  By reading the `strace` output, you can compare the values
+   you are getting or setting for the `sin_port` member of a
+   `struct sockaddr_in` instance (or `sin6_port` member of a
+   `struct sockaddr_in6` instance) to see if they match what you are printing
+   out for those values.
  - If a socket operation like `recvfrom()` results in a "Bad Address" error, it
    is often because the `addr_len` parameter had an incorrect value.  The
    `addr_len` parameter should contain a pointer to (the address of) a value
