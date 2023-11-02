@@ -210,55 +210,33 @@ int main(int argc, char *argv[]) {
 	/* Send remaining command-line arguments as separate
 	   datagrams, and read responses from server */
 
-	int bytes_read = 0;
-	unsigned char buf[4096];
-	while(bytes_read < 4096)
-	{
-		int new_bytes_read = read(0, buf + bytes_read, 512);
-		if(new_bytes_read == 0)
-		{
-			break;
+	for (int j = hostindex + 2; j < argc; j++) {
+		char buf[BUF_SIZE];
+		size_t len = strlen(argv[j]) + 1;
+		/* +1 for terminating null byte */
+
+		if (len + 1 > BUF_SIZE) {
+			fprintf(stderr,
+					"Ignoring long message in argument %d\n", j);
+			continue;
 		}
-		bytes_read += new_bytes_read;
-	}
-	
-	int bytes_sent = 0;
-	while(bytes_read >= 0)
-	{
-		int new_bytes_sent = send(sfd, buf + bytes_sent, 
-		bytes_read > 512 ? 512 : bytes_read, 0);
-		if(new_bytes_sent < 512)
+
+		if (write(sfd, argv[j], len) != len)
 		{
-			break;
+			fprintf(stderr, "partial/failed write\n");
+			exit(EXIT_FAILURE);
 		}
-		bytes_read -= new_bytes_sent;
-		bytes_sent += new_bytes_sent;
+		
+
+		// ssize_t nread = read(sfd, buf, BUF_SIZE);
+		// if (nread == -1) {
+		// 	perror("read");
+		// 	exit(EXIT_FAILURE);
+		// }
+
+		// printf("Received %zd bytes: %s\n", nread, buf);
+
 	}
 
-	bytes_read = 0;
-	unsigned char buf2[16384];
-	while(bytes_read < 16384)
-	{
-		int new_bytes_read = read(sfd, buf2 + bytes_read, 512);
-		if(new_bytes_read == 0)
-		{
-			break;
-		}
-		bytes_read += new_bytes_read;
-	}
-	write(1, buf2, bytes_read);
-
-	//bytes_sent = 0;
-	// while(bytes_read >= 0)
-	// {
-	// 	int new_bytes_sent = write(1, buf + bytes_sent, 
-	// 	bytes_read > 512 ? 512 : bytes_read, 0);
-	// 	if(new_bytes_sent < 512)
-	// 	{
-	// 		break;
-	// 	}
-	// 	bytes_read -= new_bytes_sent;
-	// 	bytes_sent += new_bytes_sent;
-	// }
 	exit(EXIT_SUCCESS);
 }

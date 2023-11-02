@@ -112,6 +112,7 @@ void eval(char *cmdline)
     int pgid = 0;
     int rdPipeFD = -1;
     char *newenviron[] = { NULL };
+    int rdPipeFD = -1;
 
     parseline(cmdline, argv);
     int numCmds = parseargs(argv, cmds, stdin_redir, stdout_redir);
@@ -155,6 +156,8 @@ void eval(char *cmdline)
             } 
             else
             {
+                int pipefd[2];
+                int res = pipe(pipefd);
                 dup2(pipefd[1], 1);
                 close(pipefd[1]);
                 dup2(rdPipeFD, 0);
