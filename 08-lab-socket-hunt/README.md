@@ -840,18 +840,22 @@ the system.  In order to use mult-byte integers for any computation (e.g.,
 printing them out, incrementing them, using them to index into an array, etc.),
 those integers need to be in *host* byte order.  For short integers (i.e.,
 `short` and `unsigned short`), the proper functions to use are the following:
+
  - `htons()` - "host to network short", convert the byte order from host order
    to network order.
  - `ntohs()` - "network to host short", convert the byte order from network
    order to host order.
+
 If you modify the code above to use `val = htons(0xabcd)` you will see that the
 output now changes such that the bytes are in the proper order.  For long
 integers (including `int` and `unsigned int`), the proper functions to use are
 the following:
+
  - `htonl()` - "host to network long", convert the byte order from host order
    to network order.
  - `ntohl()` - "network to host long", convert the byte order from network
    order to host order.
+
 Just as you need to convert any multi-byte integer that you _received_ from the
 the network to host byte order, for any multi-byte integer that you wish to
 _send_ in an outgoing message, you need to convert it to network byte order.
