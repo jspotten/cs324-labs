@@ -815,12 +815,14 @@ char` (8 bits)?  There are several ways.  Consider the following program:
 
 int main() {
 	unsigned char buf[BUFSIZE];
-	unsigned short val = 0xabcd;
-	int i = 0;
+
+        // initialize buf to 0
 	bzero(buf, BUFSIZE);
 
+        unsigned short val = 0xabcd;
+	
 	memcpy(&buf[6], &val, sizeof(unsigned short));
-	for (i = 0; i < BUFSIZE; i++) {
+	for (int i = 0; i < BUFSIZE; i++) {
 		printf("%x ", buf[i]);
 	}
 	printf("\n");
@@ -859,22 +861,22 @@ _send_ in an outgoing message, you need to convert it to network byte order.
 
 Any error codes sent by the server will be one of the following:
 
- - 129: The message was sent from an unexpected port (i.e., the source port of
+ - 129 (0x81): The message was sent from an unexpected port (i.e., the source port of
    the packet received by the server).
- - 130: The message was sent to the wrong port (i.e., the remote port of the
+ - 130 (0x82): The message was sent to the wrong port (i.e., the remote port of the
    packet received by the server).
- - 131: The message had an incorrect length.
- - 132: The value of the nonce was incorrect.
- - 133: After multiple tries, the server was unable to bind properly to the
+ - 131 (0x83): The message had an incorrect length.
+ - 132 (0x84): The value of the nonce was incorrect.
+ - 133 (0x85): After multiple tries, the server was unable to bind properly to the
    address and port that it had attempted.
- - 134: After multiple tries, the server was unable to detect a remote port on
+ - 134 (0x86): After multiple tries, the server was unable to detect a remote port on
    which the client could bind.
- - 135: A bad level was sent the server on the initial request, or the first
+ - 135 (0x87): A bad level was sent the server on the initial request, or the first
    byte of the initial request was not zero.
- - 136: A bad user id was sent the server on the initial request, such that a
+ - 136 (0x88): A bad user id was sent the server on the initial request, such that a
    username could not be found on the system running the server.
- - 137: An unknown error occurred.
- - 138: The message was sent using the wrong address family (i.e., IPv4 or
+ - 137 (0x89): An unknown error occurred.
+ - 138 (0x8a): The message was sent using the wrong address family (i.e., IPv4 or
    IPv6).
 
 
