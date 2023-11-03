@@ -33,21 +33,20 @@ int main(int argc, char *argv[])
 	memcpy(&buffer[2], &user_id, sizeof(unsigned int));
 	memcpy(&buffer[6], &seed, sizeof(unsigned short));
 	print_bytes(buffer, 8);
+
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
-	
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_flags = 0;
 	hints.ai_protocol = 0;
 
 	struct addrinfo *result;
-	
 	getaddrinfo(server, char_port, &hints, &result);
 	int sfd = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 
 	int addr_fam;
-	socklen_t addr_len;
+	socklen_t addr_len = result->ai_addrlen;
 
 	struct sockaddr_in remote_addr_in;
 	struct sockaddr_in6 remote_addr_in6;
@@ -70,6 +69,7 @@ int main(int argc, char *argv[])
 	}
 	unsigned char buffer2[256];
 	ssize_t nread = recvfrom(sfd, buffer2, 256, 0, remote_addr, &addr_len);
+	print_bytes(buffer2, nread);
 }
 
 
