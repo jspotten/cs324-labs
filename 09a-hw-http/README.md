@@ -79,22 +79,22 @@ local HTTP server.
     65535.  Use of ports with values less than 1024 require root privileges.)
 
     ```
-    cd www
-    python3 -m http.server --cgi port
+    python3 -m http.server -d www --cgi port
     ```
 
-    This starts a python-based HTTP server in the directory "www" listening on
-    the TCP port that you designated.  The `--cgi` option tells the server to
-    support CGI.  That means that paths starting with "/cgi-bin/" should be
-    treated as CGI programs; that is, they are executed by the server and their
-    output sent back to the client--as opposed the server sending their file
-    contents to the client.  Note that this HTTP server uses HTTP/1.0.  For the
-    purposes of this assignment, the difference between HTTP/1.1 and HTTP/1.0
-    is that an HTTP/1.1 server can receive multiple requests, back-to-back,
-    over the same TCP connection, whereas an HTTP/1.0 server closes its end of
-    the connection after transmitting the entire HTTP response.  In this latter
-    case, the client's call to `read()` results in a return value of 0, which
-    is, effectively, end-of-file (EOF).
+    This starts a python-based HTTP server in the directory "www" (specified
+    with the `-d` option) listening on the TCP port that you designated.  The
+    `--cgi` option tells the server to support CGI.  That means that paths
+    starting with "/cgi-bin/" should be treated as CGI programs; that is, they
+    are executed by the server and their output sent back to the client--as
+    opposed the server sending their file contents to the client.  Note that
+    this HTTP server uses HTTP/1.0.  For the purposes of this assignment, the
+    difference between HTTP/1.1 and HTTP/1.0 is that an HTTP/1.1 server can
+    receive multiple requests, back-to-back, over the same TCP connection,
+    whereas an HTTP/1.0 server closes its end of the connection after
+    transmitting the entire HTTP response.  In this latter case, the client's
+    call to `read()` results in a return value of 0, which is, effectively,
+    end-of-file (EOF).
 
 
 # Part 1: HTTP
