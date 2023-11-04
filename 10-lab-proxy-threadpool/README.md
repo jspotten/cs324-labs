@@ -47,7 +47,7 @@ programming by building a working HTTP proxy server with a threadpool.
 
 # Overview
 
-A Web proxy is a program that acts as a intermediary between an HTTP client
+An HTTP proxy is a program that acts as a intermediary between an HTTP client
 (i.e., a Web browser) and an HTTP server.  Instead of requesting a resource
 directly from the HTTP server, the HTTP client contacts the proxy server,
 which forwards the request on to the HTTP server. When the HTTP server replies
@@ -59,9 +59,10 @@ Proxies are useful for many purposes.  Sometimes proxies are used in firewalls,
 so that browsers behind a firewall can only contact a server beyond the
 firewall via the proxy.  Proxies can also act as anonymizers: by stripping
 requests of all identifying information, a proxy can make the browser anonymous
-to Web servers.  Proxies can even be used to cache web objects by storing local
-copies of objects from servers then responding to future requests by reading
-them out of its cache rather than by communicating again with remote servers.
+to HTTP servers.  Proxies can even be used to cache web objects by storing
+local copies of objects from servers then responding to future requests by
+reading them out of its cache rather than by communicating again with remote
+servers.
 
 In this lab, you will write a simple HTTP proxy objects.  For the first part of
 the lab, you will set up the proxy to accept incoming connections, read and
@@ -272,7 +273,7 @@ Then run the following to start your proxy server:
 ./proxy port
 ```
 
-Replace `port` with the port returned by `./port-for-user.pl`.
+Replace "port" with the port returned by `./port-for-user.pl`.
 
 Now, from another terminal on the same machine, run the following:
 
@@ -281,7 +282,7 @@ your proxy server implementation is incomplete.  The commands are merely a way
 to see how your proxy server behaves with its current, incomplete
 functionality.)
 
-(Replace `port` with the port on which your proxy server is listening.)
+(Replace "port" with the port on which your proxy server is listening.)
 
 ```bash
 curl -x http://localhost:port/ "http://www-notls.imaal.byu.edu:5599/cgi-bin/slowsend.cgi?obj=lyrics"
@@ -298,8 +299,8 @@ your proxy server, which is designated with `-x`.
 Note that the request to `www-notls.imaal.byu.edu:5599` is included here and in
 later tests only to test that your proxy server can properly parse the
 non-default HTTP port.  However, that particular server and port will not be
-part of tests that require your proxy server to actually connect to a Web
-server because there is no Web server listening there.
+part of tests that require your proxy server to actually connect to an HTTP
+server because there is no HTTP server listening there.
 
 Your proxy server (i.e., in `handle_client()`) should indicate that it has
 received the client request by printing out the appropriate parts of the
@@ -309,7 +310,7 @@ Now try the following:
 
 (NOTE: the commands below are still expected to fail.)
 
-(Replace `port` with the port on which your proxy server is listening.)
+(Replace "port" with the port on which your proxy server is listening.)
 
 ```bash
 ./slow-client.py -x http://localhost:port/ -b 1 "http://www-notls.imaal.byu.edu:5599/cgi-bin/slowsend.cgi?obj=lyrics"
@@ -399,7 +400,7 @@ properly when you run the following:
 
 (NOTE: the commands below are still expected to fail.)
 
-(Replace `port` with the port on which your proxy server is listening.)
+(Replace "port" with the port on which your proxy server is listening.)
 
 ```bash
 curl -x http://localhost:port/ "http://www-notls.imaal.byu.edu:5599/cgi-bin/slowsend.cgi?obj=lyrics"
@@ -460,7 +461,7 @@ curl -x http://localhost:port/ "http://www-notls.imaal.byu.edu/cgi-bin/slowsend.
 ./slow-client.py -x http://localhost:port/ -b 1 "http://www-notls.imaal.byu.edu/cgi-bin/slowsend.cgi?obj=lyrics"
 ```
 
-(Replace `port` with the port on which your proxy server is listening.  Also
+(Replace "port" with the port on which your proxy server is listening.  Also
 note that the request to `www-notls.imaal.byu.edu:5599` is not included in
 these latest tests. That URL was only used to make sure your proxy could parse
 a non-standard port, which functionality will be useful later.  However,
@@ -479,11 +480,11 @@ the existing connection.
 ### Testing
 
 At this point you should be able to pass:
- - [Tests performed against a non-local Web server](#manual-testing---non-local-server).
- - [Tests performed against a local Web server](#manual-testing---local-server).
+ - [Tests performed against a non-local HTTP server](#manual-testing---non-local-server).
+ - [Tests performed against a local HTTP server](#manual-testing---local-server).
  - [Automated tests](#automated-testing) with the following command:
    ```bash
-   ./driver.py -b 50 threadpool
+   ./driver.py -b 60 threadpool
    ```
 
 
@@ -512,11 +513,11 @@ for examples and code that you can integrate.
 ### Testing
 
 At this point you should be able to pass:
- - [Tests performed against a non-local Web server](#manual-testing---non-local-server).
- - [Tests performed against a local Web server](#manual-testing---local-server).
+ - [Tests performed against a non-local HTTP server](#manual-testing---non-local-server).
+ - [Tests performed against a local HTTP server](#manual-testing---local-server).
  - [Automated tests](#automated-testing) with the following command:
    ```bash
-   ./driver.py -b 50 -c 45 multithread
+   ./driver.py -b 60 -c 35 multithread
    ```
 
 
@@ -544,11 +545,11 @@ for examples and code that you can integrate.
 ### Testing
 
 At this point you should be able to pass:
- - [Tests performed against a non-local Web server](#manual-testing---non-local-server).
- - [Tests performed against a local Web server](#manual-testing---local-server).
+ - [Tests performed against a non-local HTTP server](#manual-testing---non-local-server).
+ - [Tests performed against a local HTTP server](#manual-testing---local-server).
  - [Automated tests](#automated-testing) with the following command:
    ```bash
-   ./driver.py -b 50 -c 45 threadpool
+   ./driver.py -b 60 -c 35 threadpool
    ```
 
 
@@ -556,15 +557,15 @@ At this point you should be able to pass:
 
 Some tools are provided for testing--both manual and automated:
 
- - The code for the `tiny` Web server
+ - A python-based HTTP server
  - A driver for automated testing
 
 
 ## Manual Testing - Non-Local Server
 
-Testing your proxy server against a production Web server will help check its
-functionality.  To test basic, sequential HTTP proxy functionality, first run the
-following to start your proxy server:
+Testing your proxy server against a production HTTP server will help check its
+functionality.  To test basic, sequential HTTP proxy functionality, first run
+the following to start your proxy server:
 
 ```bash
 ./proxy port
@@ -600,7 +601,7 @@ it will sleep in between lines that it sends.
 
 Now run the following:
 
-(Replace `port` with the port on which your proxy server is running.)
+(Replace "port" with the port on which your proxy server is running.)
 
 ```bash
 curl -o tmp1p -x http://localhost:port/ http://www-notls.imaal.byu.edu/index.html
@@ -647,47 +648,40 @@ rm tmp1 tmp1p tmp2 tmp2p tmp3 tmp3p tmp4 tmp4p tmp5 tmp5p
 
 ## Manual Testing - Local Server
 
-While testing on "non-local" Web servers is useful, having a copy of the code
-for `tiny` is helpful for testing right on your local machine.  To use `tiny`
-for testing:
+While testing on "non-local" HTTP servers is useful, using a local HTTP server
+is helpful for testing right on your local machine.  To use a python-based HTTP
+server for testing:
 
- 1. Enter the `tiny` sub-directory:
-    ```bash
-    cd tiny
+ 1. Enter the `www` sub-directory, and start the server:
+
+    (Replace "port2" with the port returned by `./port-for-user.pl` -- plus
+    one.  For example, if `./port-for-user.pl` returned 1234, then use 1235.
+    This allows you to use a *pair* of ports that are unlikely to conflict with
+    those of another user--one for your proxy server and one for the HTTP
+    server.)
+
+    ```
+    cd www
+    python3 -m http.server --cgi port2
     ```
 
- 2. Compile `tiny`:
-    ```bash
-    make
-    ```
-
-    Note: there are a number of compilation errors in the `tiny` code.  This is
-    a product of the textbook authors and needs some cleaning up, but you can
-    disregard them for the purposes of this lab.
-
- 3. Start `tiny`:
-    ```bash
-    ./tiny port2
-    ```
-
-    Replace `port2` with the port returned by `./port-for-user.pl` -- plus one.
-    For example, if `./port-for-user.pl` returned 1234, then use 1235.  This
-    allows you to use a *pair* of ports that are unlikely to conflict with
-    those of another user--one for your proxy server and one for the `tiny` Web
+    See the [HTTP Homework](../09a-hw-http) for more information on using this
     server.
 
- 4. While `tiny` is running in one window or pane, start your proxy server:
+ 4. While the HTTP server is running in one window or pane, start your proxy
+    server in another:
 
-    (Replace `port` with the port returned by `./port-for-user.pl`.)
+    (Replace "port" with the port returned by `./port-for-user.pl`.)
 
     ```bash
     ./proxy port
     ```
 
-With `tiny` running on one port (`port2`) and your proxy server running on
-another port (`port`), both on the same system, try running the following:
+With the HTTP server running on one port (`port2`) and your proxy server
+running on another port (`port`), both on the same system, try running the
+following:
 
-(Replace `port2` with the port on which the `tiny` Web server is running.)
+(Replace "port2" with the port on which the HTTP server is running.)
 
 ```bash
 curl -o tmp1 http://localhost:port2/home.html
@@ -707,8 +701,8 @@ curl -o tmp4 "http://localhost:port2/cgi-bin/slow?sleep=1&size=4096"
 
 Then run the following:
 
-(Replace `port` with the port on which your proxy server is running and `port2`
-with the port on which the `tiny` Web server is running.)
+(Replace "port" with the port on which your proxy server is running and "port2"
+with the port on which the HTTP server is running.)
 
 ```bash
 curl -o tmp1p -x http://localhost:port/ http://localhost:port2/home.html
@@ -726,7 +720,7 @@ curl -o tmp4p -x http://localhost:port/ "http://localhost:port2/cgi-bin/slow?sle
 ./slow-client.py -o tmp5p -x http://localhost:port/ "http://localhost:port2/cgi-bin/slow?sleep=1&size=4096"
 ```
 
-Now run the following to see if there are any differences (there should not be):
+This Now run the following to see if there are any differences (there should not be):
 
 ```bash
 diff -u tmp1 tmp1p
@@ -757,7 +751,7 @@ For your convenience, a script is provided for automated testing.  You can use
 it by running the following:
 
 ```bash
-./driver.py -b 50 -c 45 threadpool
+./driver.py -b 60 -c 35 threadpool
 ```
 
 The `-b` option specifies the points awarded for basic HTTP functionality, and
@@ -765,7 +759,7 @@ the `-c` option specifies the points awarded for handling concurrent client
 requests.
 
 Basic HTTP functionality involves requesting text and binary content over HTTP
-via the proxy server, both from the local `tiny` Web server and non-local Web
+via the proxy server, both from the local HTTP server and non-local HTTP
 servers, using both `curl` and `slow-client.py`  It downloads several resources
 directly and via the proxy and checks them just as shown previously.
 
@@ -780,30 +774,30 @@ For example:
  - *Basic Only*.  If you are just testing the basic functionality of your proxy
    (i.e., without concurrency), just use the `-b` option.
    ```bash
-   ./driver.py -b 50 threadpool
+   ./driver.py -b 60 threadpool
    ```
  - *Increased Verbosity.*  If you want more output, including descriptions of
    each test that is being performed, use `-v`:
    ```bash
-   ./driver.py -v -b 50 -c 45 threadpool
+   ./driver.py -v -b 60 -c 35 threadpool
    ```
    For even more output, including the commands that are being executed, use
    `-vv`:
    ```bash
-   ./driver.py -vv -b 50 -c 45 threadpool
+   ./driver.py -vv -b 30 -c 35 threadpool
    ```
  - *Proxy Output.*  If you want the output of your proxy to go to a file, which
    you can inspect either real-time or after-the-fact, use the `-p` option.
    Use `-p - ` for your proxy output to go to standard output.
    ```bash
-   ./driver.py -p myproxyoutput.txt -b 50 -c 45 threadpool
+   ./driver.py -p myproxyoutput.txt -b 60 -c 35 threadpool
    ```
  - *Downloaded Files.*  By default, the downloaded files are saved to a
    temporary directory, which is deleted after the tests finish--so your home
    directory does not get bloated.  If you want to keep these files to inspect
    them, use the `-k` option.
    ```bash
-   ./driver.py -k -b 50 -c 45 threadpool
+   ./driver.py -k -b 60 -c 35 threadpool
    ```
    If you use this option, be sure to delete the directors afterwards!
 
@@ -815,15 +809,14 @@ Any of the above options can be used together.
 Your score will be computed out of a maximum of 100 points based on the
 following distribution:
 
- - 50 for basic HTTP proxy functionality
- - 45 for handling concurrent HTTP proxy requests using a threadpool
- - 5 - compiles without any warnings (this applies to your proxy code, not
-   `tiny` and friends).
+ - 60 for basic HTTP proxy functionality
+ - 35 for handling concurrent HTTP proxy requests using a threadpool
+ - 5 - compiles without any warnings
 
 Run the following to check your implementation on one of the CS lab machines:
 
 ```b
-./driver.py -b 50 -c 45 threadpool
+./driver.py -b 60 -c 35 threadpool
 ```
 
 
