@@ -70,6 +70,49 @@ int main(int argc, char *argv[])
 	unsigned char buffer2[256];
 	ssize_t nread = recvfrom(sfd, buffer2, 256, 0, remote_addr, &addr_len);
 	print_bytes(buffer2, nread);
+	unsigned int chunk_len = (int)(buffer2[0]);
+	
+	if(chunk_len == 0)
+	{
+		exit(0);
+	}
+	else if(chunk_len > 0 && chunk_len < 128)
+	{
+		printf("\n%d\n", chunk_len);
+		
+		unsigned char *chunk[chunk_len+1];
+		memcpy(&chunk, &buffer2[1], chunk_len);
+		chunk[chunk_len] = '\0';
+		printf("%s\n", chunk);
+
+		unsigned short opcode;
+		memcpy(&opcode, &buffer2[chunk_len+1], 1);
+		printf("%x\n", opcode);
+
+		unsigned short opparam;
+		memcpy(&opparam, &buffer2[chunk_len+2], 2);
+		printf("%x\n", opparam);
+
+		unsigned int nonce;
+		memcpy(&nonce, &buffer2[chunk_len + 4], 4);
+		printf("%x\n", ntohl(nonce)+1);
+
+		unsigned int *request;
+		nonce = htonl(ntohl(nonce) + 1);
+		memcpy(&request, &nonce, 4);
+		if(sendto(sfd, &request, 4, 0, remote_addr, addr_len) != 4)
+		{
+			fprintf(stderr, "partial/failed write\n");
+			exit(EXIT_FAILURE);
+		}
+		unsigned char *buffer3[256];
+		nread = recvfrom(sfd, buffer3, 256, 0, remote_addr, &addr_len);
+		print_bytes(buffer3, nread);
+	}
+	else
+	{
+
+	}
 }
 
 
