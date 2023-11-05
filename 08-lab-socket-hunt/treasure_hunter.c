@@ -81,13 +81,18 @@ int main(int argc, char *argv[])
 		total_bytes += chunk_len;
 
 		unsigned short opcode = receiver[chunk_len + 1];
+
 		unsigned short opparam;
+		unsigned int nonce;
+		//printf("Hello\n");
 		switch(opcode)
 		{
 			case 1:
 				memcpy(&opparam, &receiver[chunk_len+2], 2);
 				remote_addr_in.sin_port = opparam;
 				remote_addr_in6.sin6_port = opparam;
+				memcpy(&nonce, &receiver[chunk_len + 4], 4);
+				nonce = htonl(ntohl(nonce) + 1);
 				break;
 
 			case 2:
@@ -106,14 +111,34 @@ int main(int argc, char *argv[])
 				if (bind(sfd, local_addr, addr_len) < 0) {
 					perror("bind()");
 				}
+				memcpy(&nonce, &receiver[chunk_len + 4], 4);
+				nonce = htonl(ntohl(nonce) + 1);
 				break;
-				
+			case 3:
+				unsigned short m;
+				memcpy(&m, &receiver[chunk_len+2], 2);
+				m = htons(m);
+				unsigned int sum = 1;
+				struct sockaddr_in temp_remote;
+				struct sockaddr *temp_remote_addr = (struct sockaddr *)&temp_remote;
+				printf("%d\n", m);
+				for(int i = 0; i < m; i++)
+				{
+					nread = recvfrom(sfd, receiver, 0, 0, temp_remote_addr, &addr_len);
+					sum += temp_remote.sin_port;
+					printf("%d\n", temp_remote.sin_port);
+				}
+				printf("%d\n", sum);
+				sum = ntohl(sum);
+				printf("%d\n", sum);
+				memcpy(&nonce, &sum, 4);
+				break;
+
 			default:
+				memcpy(&nonce, &receiver[chunk_len + 4], 4);
+				nonce = htonl(ntohl(nonce) + 1);
 				break;
 		}
-		unsigned int nonce;
-		memcpy(&nonce, &receiver[chunk_len + 4], 4);
-		nonce = htonl(ntohl(nonce) + 1);
 
 		memcpy(&request, &nonce, 4);
 		sendto(sfd, &request, 4, 0, remote_addr, addr_len);
