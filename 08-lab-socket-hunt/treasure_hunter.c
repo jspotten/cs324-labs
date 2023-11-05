@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	memcpy(&buffer[1], &level, sizeof(unsigned short));
 	memcpy(&buffer[2], &user_id, sizeof(unsigned int));
 	memcpy(&buffer[6], &seed, sizeof(unsigned short));
-	print_bytes(buffer, 8);
+	//print_bytes(buffer, 8);
 
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -72,7 +72,8 @@ int main(int argc, char *argv[])
 	unsigned int *request;
 	unsigned char receiver[SIZE];
 	ssize_t nread = recvfrom(sfd, receiver, SIZE, 0, remote_addr, &addr_len);
-	unsigned char *chunk[1024];
+	unsigned char chunk[1024];
+	bzero(chunk, 1024);
 	unsigned int chunk_len = (int)(receiver[0]);
 	unsigned int total_bytes = 0;
 
@@ -97,10 +98,9 @@ int main(int argc, char *argv[])
 		nread = recvfrom(sfd, receiver, SIZE, 0, remote_addr, &addr_len);
 		chunk_len = (int)(receiver[0]);
 	}
-	chunk[total_bytes] = '\0';
-	printf("\n%s\n", &chunk);
-	print_bytes(chunk, total_bytes);
-
+	chunk[total_bytes+1] = '\0';
+	//print_bytes(chunk, total_bytes);
+	printf("%s\n", &chunk);
 
 
 	// unsigned char buffer2[256];
