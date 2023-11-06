@@ -409,7 +409,8 @@ the above inputs, add `sha1sum` to the end of the pipeline, so you get the
 SHA1SUM of the CGI program output.
 
  26. What is the SHA1SUM of the output of the CGI program when run with the
-     above inputs?  Hint: it should start with `c0140d`.
+     above inputs (query string and request body)?  Hint: it should start with
+     `c0140d`.
 
- 27. What is the command pipeline you used to run the CGI program with the
+ 28. What is the command pipeline you used to run the CGI program with the
      above inputs and produce the SHA1SUM in the previous question?
