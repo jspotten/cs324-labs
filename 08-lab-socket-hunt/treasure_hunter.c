@@ -6,6 +6,8 @@
 #define BUFSIZE 8
 #define SIZE 256
 
+#define UNUSED(remote_addr_in6) (void)(remote_addr_in6)
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -23,7 +25,6 @@ int main(int argc, char *argv[])
 {
 	char *server = argv[1];
 	char *char_port = argv[2];
-	//unsigned int port = atoi(argv[2]);
 	unsigned int user_id = htonl(USERID);
 	unsigned short level = atoi(argv[3]);
 	unsigned short seed = htons(atoi(argv[4]));
@@ -45,20 +46,20 @@ int main(int argc, char *argv[])
 	getaddrinfo(server, char_port, &hints, &result);
 	int sfd = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 
-	int addr_fam;
 	socklen_t addr_len = result->ai_addrlen;
 
 	struct sockaddr_in remote_addr_in;
 	struct sockaddr_in6 remote_addr_in6;
+	UNUSED(remote_addr_in6);
 	struct sockaddr *remote_addr;
-	unsigned short remote_port;
+	//unsigned short remote_port;
 
 	struct sockaddr_in local_addr_in;
 	struct sockaddr_in6 local_addr_in6;
 	struct sockaddr *local_addr;
 
 	remote_addr_in = *(struct sockaddr_in *)result->ai_addr;
-	remote_port = ntohs(remote_addr_in.sin_port);
+	//remote_port = ntohs(remote_addr_in.sin_port);
 	remote_addr = (struct sockaddr *)&remote_addr_in;
 	local_addr = (struct sockaddr *)&local_addr_in;
 	
@@ -70,7 +71,7 @@ int main(int argc, char *argv[])
 
 	unsigned int *request;
 	unsigned char receiver[SIZE];
-	ssize_t nread = recvfrom(sfd, receiver, SIZE, 0, remote_addr, &addr_len);
+	recvfrom(sfd, receiver, SIZE, 0, remote_addr, &addr_len);
 	unsigned char chunk[1024];
 	unsigned int chunk_len = (int)(receiver[0]);
 	unsigned int total_bytes = 0;
@@ -84,7 +85,6 @@ int main(int argc, char *argv[])
 
 		unsigned short opparam;
 		unsigned int nonce;
-		//printf("Hello\n");
 		switch(opcode)
 		{
 			case 1:
@@ -115,22 +115,17 @@ int main(int argc, char *argv[])
 				nonce = htonl(ntohl(nonce) + 1);
 				break;
 			case 3:
-				unsigned short m;
-				memcpy(&m, &receiver[chunk_len+2], 2);
-				m = htons(m);
+				memcpy(&opparam, &receiver[chunk_len+2], 2);
+				opparam = htons(opparam);
 				unsigned int sum = 1;
 				struct sockaddr_in temp_remote;
 				struct sockaddr *temp_remote_addr = (struct sockaddr *)&temp_remote;
-				printf("%d\n", m);
-				for(int i = 0; i < m; i++)
+				for(int i = 0; i < opparam; i++)
 				{
-					nread = recvfrom(sfd, receiver, 0, 0, temp_remote_addr, &addr_len);
-					sum += temp_remote.sin_port;
-					printf("%d\n", temp_remote.sin_port);
+					recvfrom(sfd, receiver, 0, 0, temp_remote_addr, &addr_len);
+					sum += ntohs(temp_remote.sin_port);
 				}
-				printf("%d\n", sum);
-				sum = ntohl(sum);
-				printf("%d\n", sum);
+				sum = htonl(sum);
 				memcpy(&nonce, &sum, 4);
 				break;
 
@@ -143,11 +138,11 @@ int main(int argc, char *argv[])
 		memcpy(&request, &nonce, 4);
 		sendto(sfd, &request, 4, 0, remote_addr, addr_len);
 		
-		nread = recvfrom(sfd, receiver, SIZE, 0, remote_addr, &addr_len);
+		recvfrom(sfd, receiver, SIZE, 0, remote_addr, &addr_len);
 		chunk_len = (int)(receiver[0]);
 	}
 	chunk[total_bytes] = '\0';
-	printf("%s\n", &chunk);
+	printf("%s\n", chunk);
 }
 
 
