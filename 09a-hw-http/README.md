@@ -73,7 +73,11 @@ local HTTP server.
     ssh username@hostname
     ```
 
- 5. In the "HTTP Server" (lower) pane, run the following:
+ 5. In the "HTTP Server" (lower) pane, use `cd` to navigate to the directory
+    associated with this assignment, i.e., the one containing the "www"
+    directory.
+
+ 6. In the "HTTP Server" (lower) pane, run the following:
 
     (Replace "port" with a port of your choosing, an integer between 1024 and
     65535.  Use of ports with values less than 1024 require root privileges.)
