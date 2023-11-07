@@ -128,6 +128,14 @@ int main(int argc, char *argv[])
 				sum = htonl(sum);
 				memcpy(&nonce, &sum, 4);
 				break;
+			
+			case 4:
+				memcpy(&opparam, &receiver[chunk_len+2], 2);
+				remote_addr_in.sin_port = opparam;
+				remote_addr_in6.sin6_port = opparam;
+				close(sfd);
+				sfd = socket(result->ai_family == AF_INET ? AF_INET6 : AF_INET,
+							result->ai_socktype == SOCK_DGRAM ? SOCK_STREAM : SOCK_DGRAM, 0);
 
 			default:
 				memcpy(&nonce, &receiver[chunk_len + 4], 4);
