@@ -186,6 +186,7 @@ of the request by finding the start and end patterns for each component using
 `strstr()`.  Here are some examples to get you started.
 
 ```c
+char method[16];
 // The first thing to extract is the method, which is at the beginning of the
 // request, so we point beginning_of_thing to the start of req.
 char *beginning_of_thing = req;
