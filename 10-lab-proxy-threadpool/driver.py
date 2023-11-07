@@ -595,9 +595,9 @@ class SlowRequestResponseProxyTest(BasicProxyTest):
 
     download_proxy = ProxyTest._download_proxy_slow
 
-class BasicConcurrencyProxyTest(BasicProxyTest):
+class DumbConcurrencyProxyTest(BasicProxyTest):
     FILES = ['foo.html']
-    DESCRIPTION = 'Basic Concurrency Test'
+    DESCRIPTION = 'Dumb Concurrency Test'
     EXTENDED_DESCRIPTION = \
             'Issuing a request to the proxy, while it is busy with ' + \
             'another request.' 
@@ -670,7 +670,7 @@ class CacheTest(ProxyTest):
         self.attempts = len(tried)
         self.successes = successes
 
-class ExtendedConcurrencyProxyTest(ProxyTest):
+class GenericConcurrencyProxyTest(ProxyTest):
     FILES = ['cgi-bin/slow?sleep=1&size=4096', 'foo.html']
     SLOW_FILE = 'cgi-bin/slow?sleep=1&size=4096'
     FAST_FILE = 'foo.html'
@@ -679,18 +679,19 @@ class ExtendedConcurrencyProxyTest(ProxyTest):
             'Issuing 5 fast requests to the proxy, while it is busy ' + \
             'handling 5 slow requests that were issued first.'
 
+    TIMES_TO_RUN = None
+    TIMEOUT = 10
+
     download_proxy = ProxyTest._download_proxy
     download_proxy_slow = ProxyTest._download_proxy_slow
 
     def run(self):
-        times_to_run = 5
-        timeout = 10
 
         # Now do the test by fetching some text and binary files directly from
         # Tiny and via the proxy, and then comparing the results.
         tried_slow = []
         i = 0
-        for i in range(i, times_to_run):
+        for i in range(i, self.TIMES_TO_RUN):
             dst_path_proxy = os.path.join(self.proxy_dir,
                     '%s-%d' % (self._filesystem_safe(self.SLOW_FILE), i))
             dst_path_noproxy = os.path.join(self.noproxy_dir,
@@ -698,8 +699,8 @@ class ExtendedConcurrencyProxyTest(ProxyTest):
             url = 'http://%s:%d/%s&i=%d' % \
                     (self.server_host, self.server_port, self.SLOW_FILE, i)
 
-            proxy_proc = self.download_proxy_slow(url, dst_path_proxy, timeout)
-            noproxy_proc = self.download_noproxy(url, dst_path_noproxy, timeout)
+            proxy_proc = self.download_proxy_slow(url, dst_path_proxy, self.TIMEOUT)
+            noproxy_proc = self.download_noproxy(url, dst_path_noproxy, self.TIMEOUT)
 
             tried_slow.append((proxy_proc, noproxy_proc, dst_path_proxy, dst_path_noproxy))
 
@@ -709,7 +710,7 @@ class ExtendedConcurrencyProxyTest(ProxyTest):
         self.num_threads_realtime = self.get_num_threads(self.proxy_proc.pid)
 
         tried = []
-        for i in range(times_to_run, times_to_run * 2):
+        for i in range(self.TIMES_TO_RUN, self.TIMES_TO_RUN * 2):
             dst_path_proxy = os.path.join(self.proxy_dir,
                     '%s-%d' % (self._filesystem_safe(self.FAST_FILE), i))
             dst_path_noproxy = os.path.join(self.noproxy_dir,
@@ -717,8 +718,8 @@ class ExtendedConcurrencyProxyTest(ProxyTest):
             url = 'http://%s:%d/%s?i=%d' % \
                     (self.server_host, self.server_port, self.FAST_FILE, i)
 
-            proxy_proc = self.download_proxy(url, dst_path_proxy, timeout)
-            noproxy_proc = self.download_noproxy(url, dst_path_noproxy, timeout)
+            proxy_proc = self.download_proxy(url, dst_path_proxy, self.TIMEOUT)
+            noproxy_proc = self.download_noproxy(url, dst_path_noproxy, self.TIMEOUT)
 
             tried.append((proxy_proc, noproxy_proc, dst_path_proxy, dst_path_noproxy))
 
@@ -728,7 +729,7 @@ class ExtendedConcurrencyProxyTest(ProxyTest):
             noproxy_proc.wait()
 
         successes = 0
-        for i in range(times_to_run):
+        for i in range(self.TIMES_TO_RUN):
             (proxy_proc_s, noproxy_proc_s, dst_path_proxy_s, dst_path_noproxy_s) = tried_slow[i]
             (proxy_proc, noproxy_proc, dst_path_proxy, dst_path_noproxy) = tried[i]
             same_s = self._are_same(dst_path_noproxy_s, dst_path_proxy_s)
@@ -737,8 +738,24 @@ class ExtendedConcurrencyProxyTest(ProxyTest):
             if same_s and same and fast_before_slow:
                 successes += 1
 
-        self.attempts = times_to_run
+        self.attempts = self.TIMES_TO_RUN
         self.successes = successes
+
+class BasicConcurrencyProxyTest(GenericConcurrencyProxyTest):
+    DESCRIPTION = 'Basic Concurrency Test'
+    EXTENDED_DESCRIPTION = \
+            'Issuing 1 fast request to the proxy, while it is busy ' + \
+            'handling 1 slow request that was issued first.'
+
+    TIMES_TO_RUN = 1
+
+class ExtendedConcurrencyProxyTest(GenericConcurrencyProxyTest):
+    DESCRIPTION = 'Extended Concurrency Test'
+    EXTENDED_DESCRIPTION = \
+            'Issuing 5 fast requests to the proxy, while it is busy ' + \
+            'handling 5 slow requests that were issued first.'
+
+    TIMES_TO_RUN = 5
 
 def main():
     parser = argparse.ArgumentParser()
