@@ -358,15 +358,16 @@ Note that using skills you learned in the
 _without_ an HTTP server.  That is, using the shell, you can artificially set
 the environment variables that the CGI program expects, provide data to the
 standard input of the CGI by using a pipe that is connected to the standard
-output of another program, and observe the output of the CGI program on the
-terminal.  Of course, in the case of a CGI program that was executed by an HTTP
-server, the output would have gone to the socket connected to the client
-because that socket would have been duplicated onto standard output.  But
-because standard has not been modified, here you will see it on the terminal.
+output of another program (e.g., `echo`), and observe the output of the CGI
+program on the terminal.  Of course, in the case of a CGI program that was
+executed by an HTTP server, the output would have gone to the socket connected
+to the client because that socket would have been duplicated onto standard
+output.  But because standard has not been modified, here you will see it on
+the terminal.
 
 Using these concepts, your job is to determine how to run your CGI program as a
 command-line pipeline, passing it the following inputs, as if it had been
-executed (i.e., with `execve()`) by and HTTP server that understood CGI:
+executed (i.e., with `execve()`) by an HTTP server that understood CGI:
 
  - Query string: `univ=byu&class=CS324&msg=hello%3Dworld%21`
  - Request body: `username=user&password=pw`
