@@ -323,7 +323,7 @@ directory.
    be no null terminator.  Add a null byte at the end of the bytes read, so it
    can be used with string functions, such as `strlen()`.
 
- - Create the request body, so it contains the following contents:
+ - Create the response body, so it contains the following contents:
 
    ```
    Hello CS324
@@ -346,7 +346,7 @@ directory.
    should be a blank line; that is, this character sequence should follow the
    last header: `"\r\n\r\n"`.
 
- - Send the request body you created earlier.
+ - Send the response body you created earlier.
 
 Test your program by compiling it and placing the resulting binary in
 `www/cgi-bin`.  Then run `curl` against it using URL (e) above, substituting
