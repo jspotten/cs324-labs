@@ -74,8 +74,7 @@ local HTTP server.
     ```
 
  5. In the "HTTP Server" (lower) pane, use `cd` to navigate to the directory
-    associated with this assignment, i.e., the one containing the "www"
-    directory.
+    associated with this assignment.
 
  6. In the "HTTP Server" (lower) pane, run the following:
 
