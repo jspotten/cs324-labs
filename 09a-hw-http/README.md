@@ -115,7 +115,7 @@ and "port" with the hostname and port on which you are running your server, and
 unique to the URL you are retrieving.  
 
 ```
-curl -s -v url > output_a.html 2>&1
+curl -s -v url > output_a.txt 2>&1
 ```
 
 The `-s` option tells `curl` to suppress the progress bar.  The `-v` tells
