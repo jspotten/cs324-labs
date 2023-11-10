@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     unsigned int nread = read(0, buffer, content_length);
     buffer[content_length] = '\0';
     char resp_body[2000];
-    sprintf(resp_body, "Hello CS324\nQuery string: %s\nRequest body: %s\r", query_string, buffer);
-    printf("Content-Type: text/plain\nContent-Length: %d\r\n\r\n", (int)strlen(resp_body));
+    sprintf(resp_body, "Hello CS324\nQuery string: %s\nRequest body: %s\n", query_string, buffer);
+    printf("Content-Type: text/plain\r\nContent-Length: %ld\r\n\r\n", strlen(resp_body));
     printf("%s", resp_body);
 }
