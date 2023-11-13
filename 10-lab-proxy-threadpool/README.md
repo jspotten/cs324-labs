@@ -218,6 +218,11 @@ It provides four scenarios: complete HTTP request with default port; complete
 HTTP request with explicit port and query string; complete request with dotless
 hostname, and incomplete HTTP request.
 
+Note that in addition to setting the various values extracted from the request,
+`test_parser()` expects `parse_request()` to return 1 if the request was
+complete and 0 otherwise.  You could get this result by having
+`parse_request()` have `complete_request_received()`
+
 Compile your proxy code by running the following:
 
 ```bash
