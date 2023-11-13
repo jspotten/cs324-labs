@@ -221,7 +221,7 @@ hostname, and incomplete HTTP request.
 Note that in addition to setting the various values extracted from the request,
 `test_parser()` expects `parse_request()` to return 1 if the request was
 complete and 0 otherwise.  You could get this result by having
-`parse_request()` call `complete_request_received()`
+`parse_request()` call `complete_request_received()`.
 
 Compile your proxy code by running the following:
 
