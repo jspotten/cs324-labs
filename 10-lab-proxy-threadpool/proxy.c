@@ -1,5 +1,11 @@
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 /* Recommended max object size */
 #define MAX_OBJECT_SIZE 102400
@@ -14,9 +20,35 @@ void print_bytes(unsigned char *, int);
 
 int main(int argc, char *argv[])
 {
-	test_parser();
+	char *port = argv[1];
+	//test_parser();
 	printf("%s\n", user_agent_hdr);
 	return 0;
+}
+
+int open_sfd(char *port)
+{
+	int sfd = socket(AF_INET, SOCK_STREAM, 0);
+	int optval = 1;
+	setsockopt(sfd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval));
+
+	struct sockaddr_in ipv4addr;
+	struct sockaddr *local_addr;
+
+	ipv4addr.sin_family = AF_INET;
+	ipv4addr.sin_addr.s_addr = INADDR_ANY;
+	ipv4addr.sin_port = htons(port); 
+	struct socklen_t addr_len = sizeof(ipv4addr);
+	local_addr = (struct sockaddr *)&ipv4addr;
+	
+	bind(sfd, local_addr, addr_len);
+	listen(sfd, 500);
+	return sfd;
+}
+
+void handle_client()
+{
+	
 }
 
 int complete_request_received(char *request) {
