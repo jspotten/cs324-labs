@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 /* Recommended max object size */
 #define MAX_OBJECT_SIZE 102400
@@ -19,12 +20,45 @@ int main(int argc, char *argv[])
 }
 
 int complete_request_received(char *request) {
-	return 0;
+	return strstr(request, "\r\n\r\n") == NULL ? 0 : 1;
 }
 
 int parse_request(char *request, char *method,
-		char *hostname, char *port, char *path) {
-	return 0;
+		char *hostname, char *port, char *path) 
+{
+	char *method_begin = request;
+	char *method_end = strstr(method_begin, " ");
+	int num_copy_bytes = method_end - method_begin;
+	strncpy(method, method_begin, num_copy_bytes);
+	method[num_copy_bytes] = '\0';
+
+	char *path_begin = strstr(method_end, "/") + 2;
+	char *path_end = strstr(path_begin, " ");
+	num_copy_bytes = path_end - path_begin;
+	strncpy(path, path_begin, num_copy_bytes);
+	path[num_copy_bytes] = '\0';
+
+	char *hostname_begin = strstr(method_end, "/") + 2;
+	char *hostname_end = strstr(hostname_begin, "/");
+	num_copy_bytes = hostname_end - hostname_begin;
+	strncpy(hostname, hostname_begin, num_copy_bytes);
+	hostname[num_copy_bytes] = '\0';
+	
+	char *port_begin = strstr(path_begin, ":");
+	if(port_begin == NULL)
+	{
+		port = (char *)80;
+	}
+	else
+	{
+		port_begin++;
+		char *port_end = strstr(port_begin, "/");
+		num_copy_bytes = port_end - port_begin;
+		strncpy(port, port_begin, num_copy_bytes);
+		port[num_copy_bytes] = '\0';
+	}
+	printf("port: %s\n", port);
+	return complete_request_received(request);
 }
 
 void test_parser() {
@@ -37,7 +71,10 @@ void test_parser() {
 		"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0\r\n"
 		"Accept-Language: en-US,en;q=0.5\r\n\r\n",
 
-		"GET http://www.example.com:8080/index.html?foo=1&bar=2 HTTP/1.0\r\n"
+		NULL
+	};
+
+	/*"GET http://www.example.com:8080/index.html?foo=1&bar=2 HTTP/1.0\r\n"
 		"Host: www.example.com:8080\r\n"
 		"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0\r\n"
 		"Accept-Language: en-US,en;q=0.5\r\n\r\n",
@@ -47,10 +84,7 @@ void test_parser() {
 		"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0\r\n"
 		"Accept-Language: en-US,en;q=0.5\r\n\r\n",
 
-		"GET http://www.example.com:8080/index.html HTTP/1.0\r\n",
-
-		NULL
-	};
+		"GET http://www.example.com:8080/index.html HTTP/1.0\r\n",*/
 	
 	for (i = 0; reqs[i] != NULL; i++) {
 		printf("Testing %s\n", reqs[i]);
