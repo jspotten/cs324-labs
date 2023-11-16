@@ -26,6 +26,11 @@ int complete_request_received(char *request) {
 int parse_request(char *request, char *method,
 		char *hostname, char *port, char *path) 
 {
+	if(!complete_request_received(request))
+	{
+		return 0;
+	}
+
 	char *method_begin = request;
 	char *method_end = strstr(method_begin, " ");
 	int num_copy_bytes = method_end - method_begin;
@@ -44,10 +49,10 @@ int parse_request(char *request, char *method,
 	strncpy(hostname, hostname_begin, num_copy_bytes);
 	hostname[num_copy_bytes] = '\0';
 	
-	char *port_begin = strstr(path_begin, ":");
+	char *port_begin = strstr(path, ":");
 	if(port_begin == NULL)
 	{
-		port = (char *)80;
+		strncpy(port, "80", 3);
 	}
 	else
 	{
@@ -57,8 +62,8 @@ int parse_request(char *request, char *method,
 		strncpy(port, port_begin, num_copy_bytes);
 		port[num_copy_bytes] = '\0';
 	}
-	printf("port: %s\n", port);
-	return complete_request_received(request);
+	
+	return 1;
 }
 
 void test_parser() {
@@ -70,11 +75,8 @@ void test_parser() {
 		"Host: www.example.com\r\n"
 		"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0\r\n"
 		"Accept-Language: en-US,en;q=0.5\r\n\r\n",
-
-		NULL
-	};
-
-	/*"GET http://www.example.com:8080/index.html?foo=1&bar=2 HTTP/1.0\r\n"
+		
+		"GET http://www.example.com:8080/index.html?foo=1&bar=2 HTTP/1.0\r\n"
 		"Host: www.example.com:8080\r\n"
 		"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0\r\n"
 		"Accept-Language: en-US,en;q=0.5\r\n\r\n",
@@ -84,7 +86,10 @@ void test_parser() {
 		"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0\r\n"
 		"Accept-Language: en-US,en;q=0.5\r\n\r\n",
 
-		"GET http://www.example.com:8080/index.html HTTP/1.0\r\n",*/
+		"GET http://www.example.com:8080/index.html HTTP/1.0\r\n",
+
+		NULL
+	};
 	
 	for (i = 0; reqs[i] != NULL; i++) {
 		printf("Testing %s\n", reqs[i]);
