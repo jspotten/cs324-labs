@@ -348,9 +348,12 @@ directory.
  - Send the response body you created earlier.
 
 Test your program by compiling it and placing the resulting binary in
-`www/cgi-bin`.  Then run `curl` against it using URL (e) above, substituting
-"myprog1" for "myprog".  Try a few different values for the query string and
-the request body.
+`www/cgi-bin`.  Then run the same `curl` command line that you used for URL
+(e) above, substituting "myprog1" for "myprog".  Try a few different values
+for the query string and the request body.  The response headers (beginning
+with the "Content-Type" header) and the response body returned for `myprog1`
+should match those for `myprog`, byte for byte, except that "Hello world" will
+be replaced with "Hello CS324" in the body.
 
 Note that using skills you learned in the
 [BYU bandit assignment](../02-hw-byu-bandit) you can also test your CGI program
