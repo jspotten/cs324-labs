@@ -22,17 +22,19 @@ void print_bytes(unsigned char *, int);
 
 int main(int argc, char *argv[])
 {
-	// char *port = argv[1];
-	// int sfd = open_sfd(port);
-	// struct sockaddr_in remote_addr_in;
-	// struct sockaddr *remote_addr =  (struct sockaddr *)&remote_addr_in;
-	// socklen_t addr_len = sizeof(struct sockaddr_storage);
-	// while(1)
-	// {
-	// 	int fd = accept(sfd, remote_addr, &addr_len);
-	// 	handle_client(fd);
-	// }
-	test_parser();
+	char *port = argv[1];
+	int sfd = open_sfd(port);
+	struct sockaddr_in remote_addr_in;
+	struct sockaddr *remote_addr =  (struct sockaddr *)&remote_addr_in;
+	socklen_t addr_len = sizeof(struct sockaddr_storage);
+	// Change for addr from open socket
+	while(1)
+	{
+		int fd = accept(sfd, remote_addr, &addr_len);
+		printf("hi\n");
+		handle_client(fd);
+	}
+	// test_parser();
 	printf("%s\n", user_agent_hdr);
 	return 0;
 }
