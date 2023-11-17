@@ -12,6 +12,8 @@
 
 static const char *user_agent_hdr = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:97.0) Gecko/20100101 Firefox/97.0";
 
+int open_sfd(char *);
+void handle_client(int);
 int complete_request_received(char *);
 int parse_request(char *, char *, char *, char *, char *);
 void test_parser();
@@ -20,8 +22,17 @@ void print_bytes(unsigned char *, int);
 
 int main(int argc, char *argv[])
 {
-	char *port = argv[1];
-	//test_parser();
+	// char *port = argv[1];
+	// int sfd = open_sfd(port);
+	// struct sockaddr_in remote_addr_in;
+	// struct sockaddr *remote_addr =  (struct sockaddr *)&remote_addr_in;
+	// socklen_t addr_len = sizeof(struct sockaddr_storage);
+	// while(1)
+	// {
+	// 	int fd = accept(sfd, remote_addr, &addr_len);
+	// 	handle_client(fd);
+	// }
+	test_parser();
 	printf("%s\n", user_agent_hdr);
 	return 0;
 }
@@ -37,8 +48,8 @@ int open_sfd(char *port)
 
 	ipv4addr.sin_family = AF_INET;
 	ipv4addr.sin_addr.s_addr = INADDR_ANY;
-	ipv4addr.sin_port = htons(port); 
-	struct socklen_t addr_len = sizeof(ipv4addr);
+	ipv4addr.sin_port = htons(atoi(port)); 
+	socklen_t addr_len = sizeof(ipv4addr);
 	local_addr = (struct sockaddr *)&ipv4addr;
 	
 	bind(sfd, local_addr, addr_len);
@@ -46,9 +57,17 @@ int open_sfd(char *port)
 	return sfd;
 }
 
-void handle_client()
+void handle_client(int fd)
 {
-	
+	unsigned char request[MAX_OBJECT_SIZE];
+	int bytes_read = 0;
+	while((bytes_read += recv(fd, request, 500, 0) != 0));
+	print_bytes(request, bytes_read);
+	request[bytes_read] = '\0';
+	char method[16], hostname[64], port[8], path[64];
+	parse_request((char*)request, method, hostname, port, path);
+	printf("METHOD: %s\nHOSTNAME: %s\nPORT: %s\nPATH: %s\n", method, hostname, port, path);
+	close(fd);
 }
 
 int complete_request_received(char *request) {
@@ -69,19 +88,30 @@ int parse_request(char *request, char *method,
 	strncpy(method, method_begin, num_copy_bytes);
 	method[num_copy_bytes] = '\0';
 
-	char *path_begin = strstr(method_end, "/") + 2;
+	char temp[128];
+	char *temp_begin = strstr(method_end, "/") + 2;
+	char *temp_end = strstr(temp_begin, " ");
+	num_copy_bytes = temp_end - temp_begin;
+	strncpy(temp, temp_begin, num_copy_bytes);
+	temp[num_copy_bytes] = '\0';
+
+	char *path_begin = strstr(temp_begin, "/");
 	char *path_end = strstr(path_begin, " ");
 	num_copy_bytes = path_end - path_begin;
 	strncpy(path, path_begin, num_copy_bytes);
 	path[num_copy_bytes] = '\0';
 
-	char *hostname_begin = strstr(method_end, "/") + 2;
-	char *hostname_end = strstr(hostname_begin, "/");
+	char *hostname_begin = temp;
+	char *hostname_end;
+	if(strstr(hostname_begin, ":") != NULL)
+		hostname_end = strstr(hostname_begin, ":");
+	else
+		hostname_end = strstr(hostname_begin, "/");
 	num_copy_bytes = hostname_end - hostname_begin;
 	strncpy(hostname, hostname_begin, num_copy_bytes);
 	hostname[num_copy_bytes] = '\0';
 	
-	char *port_begin = strstr(path, ":");
+	char *port_begin = strstr(temp, ":");
 	if(port_begin == NULL)
 	{
 		strncpy(port, "80", 3);
@@ -107,7 +137,7 @@ void test_parser() {
 		"Host: www.example.com\r\n"
 		"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0\r\n"
 		"Accept-Language: en-US,en;q=0.5\r\n\r\n",
-		
+
 		"GET http://www.example.com:8080/index.html?foo=1&bar=2 HTTP/1.0\r\n"
 		"Host: www.example.com:8080\r\n"
 		"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0\r\n"
