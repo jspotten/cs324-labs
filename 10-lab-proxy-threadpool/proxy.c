@@ -6,13 +6,14 @@
 #include <unistd.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <asm-generic/socket.h>
 
 /* Recommended max object size */
 #define MAX_OBJECT_SIZE 102400
 
 static const char *user_agent_hdr = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:97.0) Gecko/20100101 Firefox/97.0";
 
-int open_sfd(char *);
+int open_sfd(char *, struct sockaddr*, socklen_t);
 void handle_client(int);
 int complete_request_received(char *);
 int parse_request(char *, char *, char *, char *, char *);
@@ -23,28 +24,6 @@ void print_bytes(unsigned char *, int);
 int main(int argc, char *argv[])
 {
 	char *port = argv[1];
-	int sfd = open_sfd(port);
-	struct sockaddr_in remote_addr_in;
-	struct sockaddr *remote_addr =  (struct sockaddr *)&remote_addr_in;
-	socklen_t addr_len = sizeof(struct sockaddr_storage);
-	// Change for addr from open socket
-	while(1)
-	{
-		int fd = accept(sfd, remote_addr, &addr_len);
-		printf("hi\n");
-		handle_client(fd);
-	}
-	// test_parser();
-	printf("%s\n", user_agent_hdr);
-	return 0;
-}
-
-int open_sfd(char *port)
-{
-	int sfd = socket(AF_INET, SOCK_STREAM, 0);
-	int optval = 1;
-	setsockopt(sfd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval));
-
 	struct sockaddr_in ipv4addr;
 	struct sockaddr *local_addr;
 
@@ -53,11 +32,31 @@ int open_sfd(char *port)
 	ipv4addr.sin_port = htons(atoi(port)); 
 	socklen_t addr_len = sizeof(ipv4addr);
 	local_addr = (struct sockaddr *)&ipv4addr;
+
+	int sfd = open_sfd(port, local_addr, addr_len);
+	// Change for addr from open socket
+	while(1)
+	{
+		int fd = accept(sfd, local_addr, &addr_len);
+		handle_client(fd);
+	}
+	// test_parser();
+	//printf("%s\n", user_agent_hdr);
+	return 0;
+}
+
+
+int open_sfd(char *port, struct sockaddr *local_addr, socklen_t addr_len)
+{
+	int sfd = socket(AF_INET, SOCK_STREAM, 0);
+	int optval = 1;
+	setsockopt(sfd, SOL_SOCKET, SO_REUSEPORT, &optval, sizeof(optval));
 	
 	bind(sfd, local_addr, addr_len);
 	listen(sfd, 500);
 	return sfd;
 }
+
 
 void handle_client(int fd)
 {
@@ -72,9 +71,11 @@ void handle_client(int fd)
 	close(fd);
 }
 
+
 int complete_request_received(char *request) {
 	return strstr(request, "\r\n\r\n") == NULL ? 0 : 1;
 }
+
 
 int parse_request(char *request, char *method,
 		char *hostname, char *port, char *path) 
@@ -126,9 +127,9 @@ int parse_request(char *request, char *method,
 		strncpy(port, port_begin, num_copy_bytes);
 		port[num_copy_bytes] = '\0';
 	}
-	
 	return 1;
 }
+
 
 void test_parser() {
 	int i;
