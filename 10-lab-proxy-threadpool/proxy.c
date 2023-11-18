@@ -34,7 +34,6 @@ int main(int argc, char *argv[])
 	local_addr = (struct sockaddr *)&ipv4addr;
 
 	int sfd = open_sfd(port, local_addr, addr_len);
-	// Change for addr from open socket
 	while(1)
 	{
 		int fd = accept(sfd, local_addr, &addr_len);
@@ -61,10 +60,10 @@ int open_sfd(char *port, struct sockaddr *local_addr, socklen_t addr_len)
 void handle_client(int fd)
 {
 	unsigned char request[MAX_OBJECT_SIZE];
-	int bytes_read = 0;
-	while((bytes_read += recv(fd, request, 500, 0) != 0));
-	print_bytes(request, bytes_read);
+	unsigned char receiver[MAX_OBJECT_SIZE];
+	int bytes_read = recv(fd, request, MAX_OBJECT_SIZE, 0);
 	request[bytes_read] = '\0';
+	print_bytes(request, bytes_read);
 	char method[16], hostname[64], port[8], path[64];
 	parse_request((char*)request, method, hostname, port, path);
 	printf("METHOD: %s\nHOSTNAME: %s\nPORT: %s\nPATH: %s\n", method, hostname, port, path);
