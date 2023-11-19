@@ -289,7 +289,8 @@ pages for `epoll(7)`, the `echoservere.c` code, and the output of both
      bytes sent by the client?  Do not include the event triggered by the
      incoming client connection, before data was sent.
 
- 12. How many total bytes have been echoed back to the client at this point?
+ 12. How many total bytes have been read from the socket and echoed back to the
+     client at this point?
 
 Type "bar" in the "client" pane where `nc` is running.  Then press "Enter".
 This sends four additional bytes to the server ("bar" plus newline).
