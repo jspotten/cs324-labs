@@ -209,6 +209,16 @@ Run `make` again, then start the server in the "server" pane:
 ./echoservere port
 ```
 
+In one of the "client" panes run the following:
+
+(Replace "port" with a port of your choosing.)
+
+```bash
+nc localhost port
+```
+Type "foo" in the "client" pane where `nc` is running.  Then press "Enter".
+This sends four bytes to the server ("foo" plus newline).
+
 Answer the following questions about the epoll-based concurrency.  Use the man
 pages for `read(2)` and `recv(2)`, the `echoservere.c` code, and the output of
 both `echoservere` and `nc` to help you answer.
@@ -239,9 +249,12 @@ panes.
 # Edge-Triggered Monitoring
 
 Edge-triggered monitoring with epoll replaces the default behavior of
-level-triggered monitoring.  With edge-triggered monitoring, `epoll_wait()`
-only returns for an event if the data is new--not if was _ready_ but not
-actually _read_.  This minimal notification, increases efficiency.
+level-triggered monitoring. With level-triggered monitoring, `epoll_wait()`
+returns for an event if the data is ready and has not been read.
+With edge-triggered monitoring, `epoll_wait()` only returns for an event 
+if the data is _new_. Edge-triggered monitoring gives us minimal notification, 
+which increases efficiency.
+
 
 To illustrate how this works, modify `echoservere.c` in the following ways:
 
