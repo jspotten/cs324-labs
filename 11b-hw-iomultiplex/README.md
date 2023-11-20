@@ -24,12 +24,23 @@ use nonblocking sockets, and edge-triggered monitoring to extra efficiency.
 
  1. Read the following in preparation for this assignment:
 
-    - Sections ?? and ?? in the book
+    - Sections 12.1 - 12.2 in the book
+    - `epoll (7)` - general overview of epoll, including detailed examples
 
-    Additionally, man pages for the following are also referenced throughout the
+    Additionally, man pages for the following are referenced throughout the
     assignment:
 
-    - ??
+    - `epoll_create1(2)` - shows the usage of the simple function to create an
+      epoll instance
+    - `epoll_ctl(2)` - shows the definition of the `epoll_data_t` and
+      `struct epoll_event` structures, which are used by both `epoll_ctl()` and
+      `epoll_wait()`.  Also describes the event types with which events are
+      registered to an epoll instance, e.g., for reading or writing, and which
+      type of triggering is used.
+    - `epoll_wait()` - shows the usage of the simple `epoll_wait()` function,
+      including how events are returned and how errors are indicated.
+    - `fcntl(2)` - used to make sockets nonblocking
+    - `recv(2)`, `read(2)`
 
  2. Run `make` to build the server `echoservere`.
 
@@ -250,11 +261,10 @@ panes.
 
 Edge-triggered monitoring with epoll replaces the default behavior of
 level-triggered monitoring. With level-triggered monitoring, `epoll_wait()`
-returns for an event if the data is ready and has not been read.
-With edge-triggered monitoring, `epoll_wait()` only returns for an event 
-if the data is _new_. Edge-triggered monitoring gives us minimal notification, 
-which increases efficiency.
-
+returns for an event if the data is ready and has not been read.  With
+edge-triggered monitoring, `epoll_wait()` only returns for an event if the data
+is _new_.  Edge-triggered monitoring gives us minimal notification, which
+increases efficiency.
 
 To illustrate how this works, modify `echoservere.c` in the following ways:
 
