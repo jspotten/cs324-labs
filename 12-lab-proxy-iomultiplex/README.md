@@ -359,7 +359,7 @@ Then do the following:
        method, hostname, port, and path.  Because these should all be
        null-terminated strings of type `char []`, you can use `printf()`.
      - Create the request that you will send to the server using the
-       [instructions from the threadpool proxy lab](#creating-an-http-request).
+       [instructions from the threadpool proxy lab](../10-lab-proxy-threadpool#creating-an-http-request).
      - Use `print_bytes()` to print out the HTTP request you created.
      - Create a new socket and call `connect()` to the HTTP server.
      - Configure the new socket as nonblocking. (Do this only _after_ calling
