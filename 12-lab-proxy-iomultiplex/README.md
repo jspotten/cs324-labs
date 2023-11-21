@@ -112,15 +112,6 @@ threadpool lab.
 
 ### Client Request Data
 
-A server that uses I/O multiplexing will handle multiple clients concurrently
-using only a single thread.  That means that it only acts on a given client
-when there is I/O associated with that client.  But because handling a proxy
-client involves various tasks (e.g., receive request from client, send request
-to server, etc.), it is helpful to think about the problem in terms of
-"states" and events that trigger transitions between these states.  The
-following is an example of a set of client request states, each associated with
-different I/O operations related to HTTP proxy operation:
-
 Define a `struct request_info` to keep track of data associated with handling
 each request.  The following paragraphs explain why this is necessary and
 provide a sample list of data members that you might include in such a request.
@@ -135,7 +126,7 @@ the kernel would context switch out the thread and put it into a sleep state
 until there was I/O.
 
 However, with I/O multiplexing, you can't simply call `read()` repeatedly or it
-would block the entire single-threaded process. Instead, you must to stop when
+would block the entire single-threaded process. Instead, you must stop when
 there is no more data to read and move on to handling the other ready events.
 Because you are handling all HTTP requests with a single thread, you don't have
 the ease of declaring variables associated with handling a given HTTP request
@@ -170,10 +161,10 @@ Note that these should loosely correspond to local variables used in the
 
 ### Client Request States
 
-A note about the "current state" member above.  But because handling an HTTP
+A note about the "current state" member above.  Because handling an HTTP
 request involves various tasks (e.g., receive request from client, send request
 to server, etc.), it is helpful to think about the problem in terms of "states"
-and events that trigger transitions between these states.  It is recommended
+with events that trigger transitions between these states.  It is recommended
 that you use the following set of request states, each associated with
 different I/O operations related to HTTP proxy operation:
 
@@ -181,6 +172,15 @@ different I/O operations related to HTTP proxy operation:
  - `SEND_REQUEST`
  - `READ_RESPONSE`
  - `SEND_RESPONSE`
+
+These could be defined in one of several ways.  One way is to use:
+
+```c
+#define READ_REQUEST 1
+#define SEND_REQUEST 2
+#define READ_RESPONSE 3
+#define SEND_RESPONSE 4
+```
 
 There is not an easy way to test this until the next part, when you populate
 your `struct request_info` with actual information associated with an incoming
@@ -331,9 +331,9 @@ doing much else--not just yet anyway.
 ### Receiving the HTTP Request
 
 Write a function, `handle_client()`, that takes a pointer to a
-[struct client request](#client-request-data).  The function should use the
-`struct client request` pointer passed in to determine what state the request
-is currently in.
+[struct client request](#part-2---client-request-data-and-client-request-states).
+The function should use the `struct client request` pointer passed in to
+determine what state the request is currently in.
 
 Then do the following:
 
