@@ -108,7 +108,7 @@ Refer to [Checkpoint 1](../10-lab-proxy-threadpool#checkpoint-1) in the
 threadpool lab.
 
 
-## Part 2 - Client Request States and Client Request Data
+## Part 2 - Client Request Data and Client Request States
 
 ### Client Request Data
 
