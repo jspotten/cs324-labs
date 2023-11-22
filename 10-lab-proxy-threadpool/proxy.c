@@ -14,7 +14,7 @@
 static const char *user_agent_hdr = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:97.0) Gecko/20100101 Firefox/97.0";
 
 int open_sfd(char *, struct sockaddr*, socklen_t);
-void handle_client(int);
+void handle_client(int, struct sockaddr*, socklen_t);
 int complete_request_received(char *);
 int parse_request(char *, char *, char *, char *, char *);
 void test_parser();
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	while(1)
 	{
 		int fd = accept(sfd, local_addr, &addr_len);
-		handle_client(fd);
+		handle_client(fd, local_addr, addr_len);
 	}
 	// test_parser();
 	//printf("%s\n", user_agent_hdr);
@@ -57,7 +57,7 @@ int open_sfd(char *port, struct sockaddr *local_addr, socklen_t addr_len)
 }
 
 
-void handle_client(int fd)
+void handle_client(int fd, struct sockaddr *local_addr, socklen_t addr_len)
 {
 	unsigned char request[MAX_OBJECT_SIZE];
 	int nread = 0;
@@ -66,6 +66,71 @@ void handle_client(int fd)
 	for(;;)
 	{		
 		nread = recv(fd, request + bytes_read, MAX_OBJECT_SIZE, 0);
+		bytes_read += nread;
+		if(complete_request_received((char*)request) == 0)
+			continue;
+		else if(complete_request_received((char*)request) == 1)
+		{
+			break;
+		}
+	}
+	request[bytes_read] = '\0';
+	parse_request((char*)request, method, hostname, port, path);
+	//printf("METHOD: %s\nHOSTNAME: %s\nPORT: %s\nPATH: %s\n", method, hostname, port, path);
+	
+	unsigned char response[MAX_OBJECT_SIZE];
+	if(strcmp("80", port) == 0)
+	{
+		sprintf((char*)response, 
+				"%s %s HTTP/1.0\r\nHost: %s\r\n%s\r\nConnection: Keep-Alive\r\nProxy-Connection: Keep-Alive\r\n\r\n", 
+				method,
+				path, 
+				hostname,
+				user_agent_hdr);
+	}
+	else
+	{
+		sprintf((char*)response, 
+				"%s %s HTTP/1.0\r\nHost: %s:%s\r\n%s\r\nConnection: Keep-Alive\r\nProxy-Connection: Keep-Alive\r\n\r\n", 
+				method,
+				path, 
+				hostname,
+				port,
+				user_agent_hdr);
+	}
+	// print_bytes(response, strlen((char*)response));
+
+	struct addrinfo hints;
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = 0;
+	hints.ai_protocol = 0;
+
+	struct addrinfo *result;
+	int getaddr_res = getaddrinfo(hostname, port, &hints, &result);
+	if(getaddr_res != 0)
+		printf("Error getaddr: %d\n", getaddr_res);
+	int sfd = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+
+	addr_len = result->ai_addrlen;
+	struct sockaddr_in remote_addr_in;
+	struct sockaddr *remote_addr;
+	remote_addr_in = *(struct sockaddr_in *)result->ai_addr;
+	remote_addr = (struct sockaddr *)&remote_addr_in;
+
+	if(connect(sfd, remote_addr, addr_len) == -1)
+	{
+		printf("Error connecting\n");
+	}
+	send(sfd, response, bytes_read, 0);
+
+	bzero(request, MAX_OBJECT_SIZE);
+	nread = 0;
+	bytes_read = 0;
+	for(;;)
+	{		
+		nread = recv(sfd, request + bytes_read, MAX_OBJECT_SIZE, 0);
 		bytes_read += nread;
 		if(nread == -1)
 			continue;
@@ -76,27 +141,7 @@ void handle_client(int fd)
 	}
 	request[bytes_read] = '\0';
 	print_bytes(request, bytes_read);
-	parse_request((char*)request, method, hostname, port, path);
-	printf("METHOD: %s\nHOSTNAME: %s\nPORT: %s\nPATH: %s\n", method, hostname, port, path);
-	char response[MAX_OBJECT_SIZE];
-	if(strcmp("80", port) == 0)
-	{
-		sprintf(response, 
-				"%s HTTP/1.0\r\nHost: %s\r\n%s\r\nConnection: close\r\nProxy-Connection: close\r\n\r\n", 
-				method, 
-				hostname,
-				user_agent_hdr);
-	}
-	else
-	{
-		sprintf(response, 
-				"%s HTTP/1.0\r\nHost: %s:%s\r\n%s\r\nConnection: close\r\nProxy-Connection: close\r\n\r\n", 
-				method, 
-				hostname,
-				port,
-				user_agent_hdr);
-	}
-	send(fd, response, bytes_read, 0);
+	close(sfd);
 	close(fd);
 }
 
