@@ -60,13 +60,43 @@ int open_sfd(char *port, struct sockaddr *local_addr, socklen_t addr_len)
 void handle_client(int fd)
 {
 	unsigned char request[MAX_OBJECT_SIZE];
-	unsigned char receiver[MAX_OBJECT_SIZE];
-	int bytes_read = recv(fd, request, MAX_OBJECT_SIZE, 0);
+	int nread = 0;
+	int bytes_read = 0;
+	char method[16], hostname[64], port[8], path[64];
+	for(;;)
+	{		
+		nread = recv(fd, request + bytes_read, MAX_OBJECT_SIZE, 0);
+		bytes_read += nread;
+		if(nread == -1)
+			continue;
+		else if(nread == 0)
+		{
+			break;
+		}
+	}
 	request[bytes_read] = '\0';
 	print_bytes(request, bytes_read);
-	char method[16], hostname[64], port[8], path[64];
 	parse_request((char*)request, method, hostname, port, path);
 	printf("METHOD: %s\nHOSTNAME: %s\nPORT: %s\nPATH: %s\n", method, hostname, port, path);
+	char response[MAX_OBJECT_SIZE];
+	if(strcmp("80", port) == 0)
+	{
+		sprintf(response, 
+				"%s HTTP/1.0\r\nHost: %s\r\n%s\r\nConnection: close\r\nProxy-Connection: close\r\n\r\n", 
+				method, 
+				hostname,
+				user_agent_hdr);
+	}
+	else
+	{
+		sprintf(response, 
+				"%s HTTP/1.0\r\nHost: %s:%s\r\n%s\r\nConnection: close\r\nProxy-Connection: close\r\n\r\n", 
+				method, 
+				hostname,
+				port,
+				user_agent_hdr);
+	}
+	send(fd, response, bytes_read, 0);
 	close(fd);
 }
 
