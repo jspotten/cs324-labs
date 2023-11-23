@@ -7,12 +7,22 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <asm-generic/socket.h>
+#include <pthread.h>
 
 /* Recommended max object size */
 #define MAX_OBJECT_SIZE 102400
+#define NTHREADS 8
+#define SBUFSIZE 5
 
 static const char *user_agent_hdr = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:97.0) Gecko/20100101 Firefox/97.0";
 
+struct args_struct {
+	int fd;
+	struct sockaddr *local_addr;
+	socklen_t addr_len;
+};
+
+void *process_client(void*);
 int open_sfd(char *, struct sockaddr*, socklen_t);
 void handle_client(int, struct sockaddr*, socklen_t);
 int complete_request_received(char *);
@@ -25,21 +35,32 @@ int main(int argc, char *argv[])
 {
 	char *port = argv[1];
 	struct sockaddr_in ipv4addr;
-	struct sockaddr *local_addr;
+	struct args_struct args;
+	// struct sockaddr *local_addr;
 
 	ipv4addr.sin_family = AF_INET;
 	ipv4addr.sin_addr.s_addr = INADDR_ANY;
 	ipv4addr.sin_port = htons(atoi(port)); 
-	socklen_t addr_len = sizeof(ipv4addr);
-	local_addr = (struct sockaddr *)&ipv4addr;
+	args.addr_len = sizeof(ipv4addr);
+	args.local_addr = (struct sockaddr *)&ipv4addr;
 
-	int sfd = open_sfd(port, local_addr, addr_len);
+	int sfd = open_sfd(port, args.local_addr, args.addr_len);
 	while(1)
 	{
-		int fd = accept(sfd, local_addr, &addr_len);
-		handle_client(fd, local_addr, addr_len);
+		args.fd = accept(sfd, args.local_addr, &args.addr_len);
+		pthread_t tid;
+		pthread_create(&tid, NULL, &process_client, (void *)&args);
+		//handle_client(fd, local_addr, addr_len);
 	}
 	return 0;
+}
+
+void *process_client(void *arguments)
+{
+	struct args_struct *args = (struct args_struct *)arguments;
+	handle_client(args->fd, args->local_addr, args->addr_len);
+	pthread_detach(pthread_self());
+	return NULL;
 }
 
 
@@ -136,7 +157,6 @@ void handle_client(int fd, struct sockaddr *local_addr, socklen_t addr_len)
 		}
 	}
 	request[bytes_read] = '\0';
-	print_bytes(request, bytes_read);
 	close(sfd);
 	send(fd, request, bytes_read, 0);
 	close(fd);
