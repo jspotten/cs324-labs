@@ -39,8 +39,6 @@ int main(int argc, char *argv[])
 		int fd = accept(sfd, local_addr, &addr_len);
 		handle_client(fd, local_addr, addr_len);
 	}
-	// test_parser();
-	//printf("%s\n", user_agent_hdr);
 	return 0;
 }
 
@@ -76,7 +74,6 @@ void handle_client(int fd, struct sockaddr *local_addr, socklen_t addr_len)
 	}
 	request[bytes_read] = '\0';
 	parse_request((char*)request, method, hostname, port, path);
-	//printf("METHOD: %s\nHOSTNAME: %s\nPORT: %s\nPATH: %s\n", method, hostname, port, path);
 	
 	unsigned char response[MAX_OBJECT_SIZE];
 	if(strcmp("80", port) == 0)
@@ -98,7 +95,6 @@ void handle_client(int fd, struct sockaddr *local_addr, socklen_t addr_len)
 				port,
 				user_agent_hdr);
 	}
-	// print_bytes(response, strlen((char*)response));
 
 	struct addrinfo hints;
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -123,7 +119,7 @@ void handle_client(int fd, struct sockaddr *local_addr, socklen_t addr_len)
 	{
 		printf("Error connecting\n");
 	}
-	send(sfd, response, bytes_read, 0);
+	send(sfd, response, strlen((char*)response), 0);
 
 	bzero(request, MAX_OBJECT_SIZE);
 	nread = 0;
@@ -142,6 +138,7 @@ void handle_client(int fd, struct sockaddr *local_addr, socklen_t addr_len)
 	request[bytes_read] = '\0';
 	print_bytes(request, bytes_read);
 	close(sfd);
+	send(fd, request, bytes_read, 0);
 	close(fd);
 }
 
