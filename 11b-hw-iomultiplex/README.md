@@ -329,9 +329,6 @@ panes.
 Remove the `break;` statement at the end of the `while(1)` loop (i.e., the one
 you inserted at the beginning of this section).
 
-Stop the client and then the server by using `ctrl`+`c` in their respective
-panes.
-
 Run `make` again, then start the server in the "server" pane:
 
 (Replace "port" with a port of your choosing.)
